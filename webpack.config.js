@@ -29,6 +29,9 @@ const minimizer = new TerserPlugin({
 
 module.exports = {
     mode: 'development',
+    devServer: {
+        historyApiFallback: true,
+    },
     module: {
         rules: [
             {
