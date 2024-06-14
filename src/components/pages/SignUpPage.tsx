@@ -1,8 +1,9 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
-import {useNavigate} from "react-router";
+import {AuthContext} from "../../AuthContextType";
 
 const SignUpPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -10,6 +11,8 @@ const SignUpPage: FC = () => {
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState<unknown>(null);
     const [success, setSuccess] = useState(false);
+
+    const {update: setAuthData} = useContext(AuthContext);
 
     const signUp = async () => {
         setProcessing(true);
@@ -22,6 +25,7 @@ const SignUpPage: FC = () => {
             });
 
             if (response.status === 200) {
+                setAuthData({ password, email });
                 setSuccess(true);
             }
         } catch (error) {
@@ -35,11 +39,11 @@ const SignUpPage: FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      if (success) {
-        setTimeout(() => {
-          navigate('/my-profile')
-        }, 1000);
-      }
+        if (success) {
+            setTimeout(() => {
+                navigate('/my-profile');
+            }, 1000);
+        }
     }, [success]);
 
     return (
@@ -49,7 +53,7 @@ const SignUpPage: FC = () => {
             <TextInput
               value={password}
               updateValue={setPassword}
-              label="E-mail"
+              label="Password"
             />
             <button type="button" onClick={jsSubmit(signUp)}>
                 Sign up

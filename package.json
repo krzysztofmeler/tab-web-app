@@ -130,6 +130,7 @@
             "implicit-arrow-linebreak": "off",
             "function-paren-newline": "off",
             "operator-linebreak": "off",
+            "no-empty": "warn",
             "arrow-parens": "off",
             "no-confusing-arrow": "off",
             "import/extensions": "off",
