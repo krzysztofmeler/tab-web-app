@@ -48,6 +48,7 @@
         "webpack-dev-server": "4.11.1"
     },
     "dependencies": {
+        "axios": "1.7.2",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-router": "6.23.0",
@@ -119,6 +120,7 @@
             "react/prop-types": "off",
             "no-useless-constructor": "off",
             "react/require-default-props": "off",
+            "@typescript-eslint/no-empty-function": "warn",
             "linebreak-style": "off",
             "no-else-return": "off",
             "jsx-a11y/anchor-is-valid": "off",

@@ -7,8 +7,8 @@ import { RecipePage } from './components/pages/RecipePage';
 import { AddRecipePage } from './components/pages/AddRecipePage';
 import { EditRecipePage } from './components/pages/EditRecipePage';
 import { MainPage } from './components/pages/MainPage';
-import {SignUpPage} from "./components/pages/SignUpPage";
-import {LoginPage} from "./components/pages/LoginPage";
+import { SignUpPage } from './components/pages/SignUpPage';
+import { LoginPage } from './components/pages/LoginPage';
 
 const root = ReactDOM.createRoot(
     document.getElementById('react-page-root') as HTMLElement,
@@ -22,12 +22,12 @@ root.render(
                     element: <MainPage />,
                 },
                 {
-                  path: '/sign-up',
-                  element: <SignUpPage />,
+                    path: '/sign-up',
+                    element: <SignUpPage />,
                 },
                 {
-                  path: '/sign-in',
-                  element: <LoginPage />,
+                    path: '/sign-in',
+                    element: <LoginPage />,
                 },
                 {
                     path: '/recipes',
