@@ -1,0 +1,190 @@
+{
+    "name": "react-typescript-starter",
+    "version": "1.0.0",
+    "scripts": {
+        "lint": "eslint src --fix",
+        "build": "webpack",
+        "start:watch": "webpack server --config webpack.config.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/krzysztofmeler/react-typescript-starter.git"
+    },
+    "author": "Krzysztof Meler",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://gitlab.com/krzysztofmeler/react-typescript-starter/issues"
+    },
+    "homepage": "https://gitlab.com/krzysztofmeler/react-typescript-starter#readme",
+    "devDependencies": {
+        "@babel/core": "7.19.1",
+        "@babel/plugin-proposal-class-properties": "7.18.6",
+        "@babel/preset-react": "7.18.6",
+        "@types/react": "18.0.20",
+        "@types/react-dom": "18.0.6",
+        "@typescript-eslint/eslint-plugin": "5.38.0",
+        "@typescript-eslint/parser": "5.38.0",
+        "babel-loader": "8.2.5",
+        "babel-preset-react": "6.24.1",
+        "css-loader": "6.7.1",
+        "dart-sass": "1.25.0",
+        "eslint": "8.23.1",
+        "eslint-config-airbnb": "19.0.4",
+        "eslint-config-prettier": "8.5.0",
+        "eslint-config-react": "1.1.7",
+        "eslint-plugin-import": "2.26.0",
+        "eslint-plugin-jsx-a11y": "6.6.1",
+        "eslint-plugin-prefer-arrow": "1.2.3",
+        "eslint-plugin-prettier": "4.2.1",
+        "eslint-plugin-react": "7.31.8",
+        "eslint-webpack-plugin": "3.2.0",
+        "html-webpack-plugin": "5.5.0",
+        "sass": "1.76.0",
+        "sass-loader": "10.5.2",
+        "style-loader": "3.3.1",
+        "terser-webpack-plugin": "5.3.6",
+        "webpack": "5.91.0",
+        "webpack-cli": "4.10.0",
+        "webpack-dev-server": "4.11.1"
+    },
+    "dependencies": {
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-router": "6.23.0",
+        "react-router-dom": "6.23.0",
+        "ts-loader": "9.4.1",
+        "typescript": "4.8.3"
+    },
+    "eslintConfig": {
+        "globals": {
+            "RequestInit": true,
+            "RequestInfo": true
+        },
+        "extends": [
+            "plugin:react/recommended",
+            "plugin:@typescript-eslint/recommended",
+            "prettier",
+            "plugin:prettier/recommended",
+            "airbnb"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+            "@typescript-eslint",
+            "prefer-arrow",
+            "prettier",
+            "react"
+        ],
+        "rules": {
+            "prettier/prettier": [
+                "warn",
+                {
+                    "singleQuote": true,
+                    "endOfLine": "auto",
+                    "parser": "typescript"
+                }
+            ],
+            "no-unused-vars": "off",
+            "@typescript-eslint/no-unused-vars": [
+                "off",
+                {
+                    "vars": "all",
+                    "args": "after-used",
+                    "ignoreRestSiblings": true
+                }
+            ],
+            "react/jsx-filename-extension": [
+                "error",
+                {
+                    "extensions": [
+                        ".tsx"
+                    ]
+                }
+            ],
+            "no-shadow": "warn",
+            "react/jsx-props-no-spreading": "off",
+            "react/jsx-wrap-multilines": [
+                "warn",
+                {
+                    "declaration": false,
+                    "assignment": false
+                }
+            ],
+            "max-len": [
+                "warn",
+                {
+                    "code": 150
+                }
+            ],
+            "react/jsx-curly-newline": "off",
+            "react/prop-types": "off",
+            "no-useless-constructor": "off",
+            "react/require-default-props": "off",
+            "linebreak-style": "off",
+            "no-else-return": "off",
+            "jsx-a11y/anchor-is-valid": "off",
+            "jsx-a11y/click-events-have-key-events": "warn",
+            "react/jsx-one-expression-per-line": "off",
+            "object-curly-newline": "off",
+            "implicit-arrow-linebreak": "off",
+            "function-paren-newline": "off",
+            "operator-linebreak": "off",
+            "arrow-parens": "off",
+            "no-confusing-arrow": "off",
+            "import/extensions": "off",
+            "import/no-unresolved": "off",
+            "import/named": "off",
+            "import/no-extraneous-dependencies": "off",
+            "import/prefer-default-export": "off",
+            "react/jsx-uses-react": "off",
+            "react/react-in-jsx-scope": "off",
+            "react/jsx-indent": "off",
+            "indent": "off",
+            "react/function-component-definition": [
+                2,
+                {
+                    "namedComponents": "arrow-function",
+                    "unnamedComponents": "arrow-function"
+                }
+            ],
+            "prefer-arrow/prefer-arrow-functions": [
+                "warn",
+                {
+                    "disallowPrototype": true,
+                    "classPropertiesAllowed": false
+                }
+            ],
+            "no-param-reassign": [
+                "warn",
+                {
+                    "props": true,
+                    "ignorePropertyModificationsFor": [
+                        "state"
+                    ]
+                }
+            ]
+        },
+        "env": {
+            "browser": true,
+            "jest": true
+        },
+        "overrides": [
+            {
+                "files": [
+                    "**/*.ts"
+                ],
+                "rules": {
+                    "react/jsx-uses-react": "off",
+                    "react/react-in-jsx-scope": "off"
+                }
+            }
+        ]
+    },
+    "prettier": {
+        "trailingComma": "all",
+        "tabWidth": 4,
+        "useTabs": false,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "arrowParens": "always"
+    }
+}
