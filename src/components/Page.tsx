@@ -6,7 +6,8 @@ const Page: FC = () => {
     const [authData, setAuthData] = useState<AuthData | null>(null);
 
     return (
-        // eslint-disable-next-line react/jsx-no-constructed-context-values // todo
+        // todo
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
         <AuthContext.Provider value={{ data: authData, update: setAuthData }}>
             <h1>Recipes</h1>
             <Outlet />

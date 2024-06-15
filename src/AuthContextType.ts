@@ -1,8 +1,14 @@
 import { createContext } from 'react';
 
+enum Role {
+    USER = 'USER',
+    ADMIN = 'ADMIN',
+}
+
 type AuthData = {
     email: string;
     password: string;
+    roles: Role[];
 };
 
 type AuthContextType = {
@@ -15,5 +21,5 @@ const AuthContext = createContext<AuthContextType>({
     update: () => {},
 });
 
-export { AuthContext };
+export { AuthContext, Role };
 export type { AuthData, AuthContextType };

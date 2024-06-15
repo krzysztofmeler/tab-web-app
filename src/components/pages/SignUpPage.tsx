@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
-import {AuthContext} from "../../AuthContextType";
+import { AuthContext, Role } from '../../AuthContextType';
 
 const SignUpPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const SignUpPage: FC = () => {
     const [error, setError] = useState<unknown>(null);
     const [success, setSuccess] = useState(false);
 
-    const {update: setAuthData} = useContext(AuthContext);
+    const { update: setAuthData } = useContext(AuthContext);
 
     const signUp = async () => {
         setProcessing(true);
@@ -21,11 +21,11 @@ const SignUpPage: FC = () => {
             const response = await fetch.post('register', {
                 email,
                 password,
-                roles: ['USER'],
+                roles: [Role.USER, Role.ADMIN],
             });
 
             if (response.status === 200) {
-                setAuthData({ password, email });
+                setAuthData({ password, email, roles: [Role.USER] });
                 setSuccess(true);
             }
         } catch (error) {
