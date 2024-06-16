@@ -3,10 +3,17 @@ import { useParams } from 'react-router';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
-import { Rating, Recipe } from '../../types/Recipe';
+import { Comment, Rating, Recipe } from '../../types/Recipe';
 
 type RatingDisplay = {
     rating: number;
+    creator: string;
+    date: string;
+    id: number;
+};
+
+type CommentDisplay = {
+    comment: string;
     creator: string;
     date: string;
     id: number;
@@ -23,6 +30,7 @@ const RecipePage: FC = () => {
 
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [ratings, setRatings] = useState<RatingDisplay[]>([]);
+    const [comments, setComments] = useState<CommentDisplay[]>([]);
 
     useAsyncEffect(async () => {
         const recipeResponse = await fetch.get(`recipe/${id}`, {
@@ -30,6 +38,10 @@ const RecipePage: FC = () => {
         });
         const ratingResponse = await fetch.get(
             `rating/search/?recipeId=${id}`,
+            { headers: { Authorization: authData.Authorization } },
+        );
+        const commentsResponse = await fetch.get(
+            `comment/search/?recipeId=${id}`,
             { headers: { Authorization: authData.Authorization } },
         );
 
@@ -45,6 +57,19 @@ const RecipePage: FC = () => {
                         creator: rating.user.email,
                         date: new Date(rating.date).toLocaleString(),
                         id: rating.id,
+                    }),
+                ),
+            );
+        }
+
+        if (commentsResponse.status === 200) {
+            setComments(
+                (commentsResponse.data as unknown as Comment[]).map(
+                    (comment) => ({
+                        id: comment.id,
+                        date: comment.date,
+                        comment: comment.comment,
+                        creator: comment.user.email,
                     }),
                 ),
             );
@@ -82,6 +107,17 @@ const RecipePage: FC = () => {
                 {ratings.map((r) => (
                     <li key={r.id}>
                         {r.rating.toString()} by {r.creator} as {r.date}
+                    </li>
+                ))}
+            </ul>
+
+            <p>Comments:</p>
+            <ul>
+                {comments.map((c) => (
+                    <li key={c.id}>
+                        {c.creator} as {c.date} wrote:
+                        <br />
+                        {c.comment}
                     </li>
                 ))}
             </ul>

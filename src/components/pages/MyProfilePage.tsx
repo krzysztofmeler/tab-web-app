@@ -2,7 +2,6 @@ import { FC, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import { AuthContext, Role } from '../../AuthContextType';
-import { fetch } from '../../hooks/useRequest.hook';
 import { useEffectOnce } from '../../hooks/useEffectOnce.hook';
 
 const MyProfilePage: FC = () => {

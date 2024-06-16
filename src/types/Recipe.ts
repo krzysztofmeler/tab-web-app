@@ -19,4 +19,12 @@ type Rating = {
     date: string;
 };
 
-export type { Recipe, RecipeWithOwner, Rating };
+type Comment = {
+    id: number;
+    recipe: RecipeWithOwner;
+    user: User;
+    date: string;
+    comment: string;
+};
+
+export type { Recipe, RecipeWithOwner, Rating, Comment };
