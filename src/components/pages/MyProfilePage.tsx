@@ -3,17 +3,18 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import { AuthContext, Role } from '../../AuthContextType';
 import { fetch } from '../../hooks/useRequest.hook';
+import { useEffectOnce } from '../../hooks/useEffectOnce.hook';
 
 const MyProfilePage: FC = () => {
     const { data: authData } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffectOnce(() => {
         if (authData === null) {
             navigate('/sign-in');
         }
-    }, []);
+    });
 
     if (authData === null) {
         return <>You have to login first.</>;

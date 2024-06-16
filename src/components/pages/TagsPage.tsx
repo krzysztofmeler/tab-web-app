@@ -1,7 +1,5 @@
-import { FC, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { FC, useState } from 'react';
 import { fetch } from '../../hooks/useRequest.hook';
-import { AuthContext } from '../../AuthContextType';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { Tag } from '../../types/Tag';
@@ -10,8 +8,6 @@ import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook'
 
 const TagsPage: FC = () => {
     const [tagName, setTagName] = useState('');
-
-    const navigate = useNavigate();
 
     const [tags, setTags] = useState<Tag[]>([]);
 
