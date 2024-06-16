@@ -4,6 +4,7 @@ import {AuthContext} from "../../AuthContextType";
 import {useNavigate} from "react-router";
 import {TextInput} from "../forms/TextInput";
 import {jsSubmit} from "../../utils/js-submit";
+import {Tag} from "../../types/Tag";
 
 const TagsPage: FC = () => {
 
@@ -11,7 +12,9 @@ const TagsPage: FC = () => {
 
   const [tagName, setTagName] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     if (authData === null) {
@@ -27,8 +30,9 @@ const TagsPage: FC = () => {
     (async () => {
       const response = await fetch('tag/all', { method: 'GET', headers: { Authorization: authData.Authorization } });
 
-      console.log(response.data);
-
+      if (response.status === 200) {
+        setTags(response.data as Tag[]);
+      }
     })()
 
   }, []);
@@ -36,7 +40,11 @@ const TagsPage: FC = () => {
   const addNewTag = () => {
     (async () => {
       const response = await fetch('tag/new', { method: 'POST', data: { tag: tagName }, headers: { Authorization: authData.Authorization } })
-      console.dir(response.data);
+
+      if (response.status === 200) {
+        setTags([...tags, response.data]);
+      }
+
     })()
   }
 
@@ -46,6 +54,12 @@ const TagsPage: FC = () => {
     <TextInput value={tagName} updateValue={setTagName} label={"New tag name"} />
 
     <button type={'button'} onClick={jsSubmit(addNewTag)}>Add new tag</button>
+
+    <br />
+
+    <ul>
+      { tags.map(tag => (<li key={tag.id}>{tag.tag}</li>)) }
+    </ul>
 
   </>);
 }
