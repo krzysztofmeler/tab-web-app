@@ -1,5 +1,4 @@
 import {FC, useContext, useEffect, useState} from 'react';
-import {Link} from "react-router-dom";
 import {fetch} from "../../hooks/useRequest.hook";
 import {AuthContext} from "../../AuthContextType";
 import {useNavigate} from "react-router";
@@ -26,7 +25,7 @@ const TagsPage: FC = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch('tag/all', { method: 'GET', headers: { Authorization: `Basic ${btoa(authData.email + ":" + authData.password)}` } });
+      const response = await fetch('tag/all', { method: 'GET', headers: { Authorization: authData.Authorization } });
 
       console.log(response.data);
 
@@ -36,7 +35,7 @@ const TagsPage: FC = () => {
 
   const addNewTag = () => {
     (async () => {
-      const response = await fetch('tag/new', { method: 'POST', data: { tag: tagName }, headers: { Authorization: `Basic ${btoa(authData.email + ':' + authData.password)}` } })
+      const response = await fetch('tag/new', { method: 'POST', data: { tag: tagName }, headers: { Authorization: authData.Authorization } })
       console.dir(response.data);
     })()
   }

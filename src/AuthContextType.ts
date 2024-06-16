@@ -9,6 +9,7 @@ type AuthData = {
     email: string;
     password: string;
     roles: Role[];
+    Authorization: string;
 };
 
 type AuthContextType = {

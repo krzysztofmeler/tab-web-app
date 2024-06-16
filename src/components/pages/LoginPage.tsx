@@ -5,6 +5,7 @@ import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
 import settings from '../../settings';
+import {AuthorizationHeaderFromEmailAndPassword} from "../../utils/auth";
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -27,8 +28,6 @@ const LoginPage: FC = () => {
         setProcessing(true);
         setInvalidCredentials(false);
 
-        const authString = btoa(`${email}:${password}`);
-
         try {
             // native fetch is used because axios does not allow disabling of redirect following
             const response = await fetch(`${settings.backendURI}../user`, {
@@ -36,14 +35,14 @@ const LoginPage: FC = () => {
                 mode: 'cors',
                 redirect: 'manual',
                 headers: {
-                    Authorization: `Basic ${authString}`,
+                    Authorization: AuthorizationHeaderFromEmailAndPassword(email, password)
                 },
             });
 
             if (response.status === 200) {
                 const data = await response.json();
 
-                setAuthData({ password, email, roles: data.roles }); // todo: valid rules from response
+                setAuthData({ password, email, roles: data.roles, Authorization: AuthorizationHeaderFromEmailAndPassword(email, password) }); // todo: valid rules from response
                 setSuccess(true);
             } else if (response.status === 302) {
                 // 302 means invalid credentials
