@@ -11,6 +11,8 @@ import { SignUpPage } from './components/pages/SignUpPage';
 import { LoginPage } from './components/pages/LoginPage';
 import { MyProfilePage } from './components/pages/MyProfilePage';
 import { Page } from './components/Page';
+import {AdministrativeFunctionsPage} from "./components/pages/AdministrativeFunctionsPage";
+import {TagsPage} from "./components/pages/TagsPage";
 
 const root = ReactDOM.createRoot(
     document.getElementById('react-page-root') as HTMLElement,
@@ -55,6 +57,14 @@ root.render(
                             path: '/edit-recipe',
                             element: <EditRecipePage />,
                         },
+                        {
+                            path: '/administration',
+                            element: <AdministrativeFunctionsPage />,
+                        },
+                        {
+                            path: '/administration/tags',
+                            element: <TagsPage />,
+                        }
                     ],
                 },
             ])}

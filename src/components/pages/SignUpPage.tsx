@@ -25,7 +25,7 @@ const SignUpPage: FC = () => {
             });
 
             if (response.status === 200) {
-                setAuthData({ password, email, roles: [Role.USER] });
+                setAuthData({ password, email, roles: response.data.roles });
                 setSuccess(true);
             }
         } catch (error) {
