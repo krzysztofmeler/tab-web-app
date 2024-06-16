@@ -10,8 +10,8 @@ const AddRecipePage: FC = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
-    const [steps, setSteps] = useState<string[]>(['hardcoded']);
-    const [tags, setTags] = useState<string[]>(['hardcoded']);
+    const [steps, setSteps] = useState<string[]>(['step 001', 'step 002']);
+    const [tags, setTags] = useState<number[]>([]);
 
     const { data: authData } = useAuthContextRedirect();
 
