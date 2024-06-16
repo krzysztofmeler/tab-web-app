@@ -4,6 +4,7 @@ import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext } from '../../AuthContextType';
+import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 
 const AddRecipePage: FC = () => {
     const [name, setName] = useState('');
@@ -12,15 +13,7 @@ const AddRecipePage: FC = () => {
     const [steps, setSteps] = useState<string[]>(['hardcoded']);
     const [tags, setTags] = useState<string[]>(['hardcoded']);
 
-    const navigate = useNavigate();
-
-    const { data: authData } = useContext(AuthContext);
-
-    useEffect(() => {
-        if (authData === null) {
-            navigate('/sign-in');
-        }
-    }, []);
+    const { data: authData } = useAuthContextRedirect();
 
     const create = async () => {
         try {

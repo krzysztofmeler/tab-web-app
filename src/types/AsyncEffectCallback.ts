@@ -1,5 +1,5 @@
-import {EffectCallback} from "react";
+import { EffectCallback } from 'react';
 
-type AsyncEffectCallback = EffectCallback | (() => (Promise<void>));
+type AsyncEffectCallback = EffectCallback | (() => Promise<void>);
 
-export type {AsyncEffectCallback}
+export type { AsyncEffectCallback };

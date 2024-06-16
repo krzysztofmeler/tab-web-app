@@ -1,5 +1,6 @@
-const AuthorizationHeaderFromEmailAndPassword = (email: string, password: string): string => {
-  return 'Basic ' + btoa(`${email}:${password}`)
-}
+const AuthorizationHeaderFromEmailAndPassword = (
+    email: string,
+    password: string,
+): string => `Basic ${btoa(`${email}:${password}`)}`;
 
 export { AuthorizationHeaderFromEmailAndPassword };

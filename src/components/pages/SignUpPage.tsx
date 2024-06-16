@@ -4,7 +4,7 @@ import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext, Role } from '../../AuthContextType';
-import {AuthorizationHeaderFromEmailAndPassword} from "../../utils/auth";
+import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
 
 const SignUpPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -26,7 +26,15 @@ const SignUpPage: FC = () => {
             });
 
             if (response.status === 200) {
-                setAuthData({ password, email, roles: response.data.roles, Authorization: AuthorizationHeaderFromEmailAndPassword(email, password) });
+                setAuthData({
+                    password,
+                    email,
+                    roles: response.data.roles,
+                    Authorization: AuthorizationHeaderFromEmailAndPassword(
+                        email,
+                        password,
+                    ),
+                });
                 setSuccess(true);
             }
         } catch (error) {
