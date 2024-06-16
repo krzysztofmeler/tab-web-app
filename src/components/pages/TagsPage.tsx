@@ -5,6 +5,7 @@ import {useNavigate} from "react-router";
 import {TextInput} from "../forms/TextInput";
 import {jsSubmit} from "../../utils/js-submit";
 import {Tag} from "../../types/Tag";
+import {useAsyncEffect} from "../../hooks/useAsyncEffect.hook";
 
 const TagsPage: FC = () => {
 
@@ -26,15 +27,12 @@ const TagsPage: FC = () => {
     return <>You must login first</>;
   }
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch('tag/all', { method: 'GET', headers: { Authorization: authData.Authorization } });
+  useAsyncEffect(async () => {
+    const response = await fetch('tag/all', { method: 'GET', headers: { Authorization: authData.Authorization } });
 
-      if (response.status === 200) {
-        setTags(response.data as Tag[]);
-      }
-    })()
-
+    if (response.status === 200) {
+      setTags(response.data as Tag[]);
+    }
   }, []);
 
   const addNewTag = () => {
