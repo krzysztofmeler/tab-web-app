@@ -4,6 +4,8 @@ import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook'
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { Comment, Rating, Recipe } from '../../types/Recipe';
+import { TextInput } from '../forms/TextInput';
+import { jsSubmit } from '../../utils/js-submit';
 
 type RatingDisplay = {
     rating: number;
@@ -80,6 +82,15 @@ const RecipePage: FC = () => {
         ratings.map((r) => r.rating).reduce((all, curr) => all + curr, 0) /
         ratings.length;
 
+    const [comment, setComment] = useState('');
+
+    const addComment = async () => {
+        const response = await fetch.post('comment/new', {
+            comment,
+            recipeId: id,
+        });
+    };
+
     if (recipe === null) {
         return <>Loading recipe...</>;
     }
@@ -121,6 +132,15 @@ const RecipePage: FC = () => {
                     </li>
                 ))}
             </ul>
+
+            <TextInput
+              value={comment}
+              updateValue={setComment}
+              label="New comment:"
+            />
+            <button type="button" onClick={jsSubmit(addComment)}>
+                Add comment
+            </button>
         </>
     );
 };
