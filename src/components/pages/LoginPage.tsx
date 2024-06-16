@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
-import settings from "../../settings";
+import settings from '../../settings';
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -27,21 +27,20 @@ const LoginPage: FC = () => {
         setProcessing(true);
         setInvalidCredentials(false);
 
-        const authString = btoa(email + ':' + password);
+        const authString = btoa(`${email}:${password}`);
 
         try {
             // native fetch is used because axios does not allow disabling of redirect following
-            const response = await fetch(settings.backendURI + '../user', {
+            const response = await fetch(`${settings.backendURI}../user`, {
                 method: 'GET',
-                mode: "cors",
-                redirect: "manual",
+                mode: 'cors',
+                redirect: 'manual',
                 headers: {
-                    Authorization: `Basic ${authString}`
-                }
-            })
+                    Authorization: `Basic ${authString}`,
+                },
+            });
 
             if (response.status === 200) {
-
                 const data = await response.json();
 
                 setAuthData({ password, email, roles: data.roles }); // todo: valid rules from response
@@ -77,7 +76,7 @@ const LoginPage: FC = () => {
               label="Password"
             />
 
-            { invalidCredentials && <p>Invalid credentials provided</p> }
+            {invalidCredentials && <p>Invalid credentials provided</p>}
 
             <button
               disabled={processing}
