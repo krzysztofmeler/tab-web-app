@@ -1,3 +1,5 @@
+import {User} from "./User";
+
 type Recipe = {
   id: number;
   name: string;
@@ -7,4 +9,14 @@ type Recipe = {
   tags: string[],
 }
 
-export type { Recipe }
+type RecipeWithOwner = Recipe & { owner: User }
+
+type Rating = {
+  id: number;
+  recipe: RecipeWithOwner;
+  user: User;
+  rating: number;
+  date: string;
+}
+
+export type { Recipe, RecipeWithOwner, Rating }
