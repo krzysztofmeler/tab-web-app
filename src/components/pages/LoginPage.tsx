@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
-import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext } from '../../AuthContextType';
+import settings from "../../settings";
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -13,6 +13,7 @@ const LoginPage: FC = () => {
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState<unknown>(null);
     const [success, setSuccess] = useState(false);
+    const [invalidCredentials, setInvalidCredentials] = useState(false);
 
     const { update: setAuthData } = useContext(AuthContext);
 
@@ -24,18 +25,30 @@ const LoginPage: FC = () => {
         }
 
         setProcessing(true);
+        setInvalidCredentials(false);
+
+        const authString = btoa(email + ':' + password);
 
         try {
-            const response = await fetch.get('../user', {
-                auth: {
-                    password,
-                    username: email,
-                },
-            });
+            // native fetch is used because axios does not allow disabling of redirect following
+            const response = await fetch(settings.backendURI + '../user', {
+                method: 'GET',
+                mode: "cors",
+                redirect: "manual",
+                headers: {
+                    Authorization: `Basic ${authString}`
+                }
+            })
 
             if (response.status === 200) {
-                setAuthData({ password, email, roles: response.data.roles });
+
+                const data = await response.json();
+
+                setAuthData({ password, email, roles: data.roles }); // todo: valid rules from response
                 setSuccess(true);
+            } else if (response.status === 302) {
+                // 302 means invalid credentials
+                setInvalidCredentials(true);
             }
         } catch (error) {
             console.error(error);
@@ -63,6 +76,9 @@ const LoginPage: FC = () => {
               updateValue={setPassword}
               label="Password"
             />
+
+            { invalidCredentials && <p>Invalid credentials provided</p> }
+
             <button
               disabled={processing}
               type="button"
