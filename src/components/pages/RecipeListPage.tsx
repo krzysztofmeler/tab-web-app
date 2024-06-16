@@ -1,7 +1,6 @@
 import React, {FC, useState} from 'react';
 import {useAsyncEffect} from "../../hooks/useAsyncEffect.hook";
 import {fetch} from "../../hooks/useRequest.hook";
-import {AuthorizationHeaderFromEmailAndPassword} from "../../utils/auth";
 import {useAuthContextRedirect} from "../../hooks/useAuthContextRedirect.hook";
 import {Recipe} from "../../types/Recipe";
 import {Link} from "react-router-dom";
@@ -27,7 +26,7 @@ const RecipeListPage: FC = () => {
     <h2>Recipe list</h2>
 
     <ul>
-      { recipes.map(recipe => <Link key={recipe.id} to={ `/recipes/${recipe.id}/${encodeURIComponent(recipe.name)}`}>
+      { recipes.map(recipe => <Link key={recipe.id} to={ `/recipe/${recipe.id}/${encodeURIComponent(recipe.name)}`}>
         <p>{recipe.name}</p>
         <p>{recipe.description.slice(0, 120)}{ recipe.description.length > 120 ? '...' : '' }</p>
       </Link>) }
