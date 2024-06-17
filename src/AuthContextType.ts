@@ -22,5 +22,12 @@ const AuthContext = createContext<AuthContextType>({
     update: () => {},
 });
 
-export { AuthContext, Role };
+const localStorageKeys: Record<keyof AuthData, string> = {
+    email: 'tab:credentials:email',
+    password: 'tab:credentials:password',
+    roles: 'tab:credentials:roles',
+    Authorization: 'tab:credentials:Authorization',
+};
+
+export { AuthContext, Role, localStorageKeys };
 export type { AuthData, AuthContextType };
