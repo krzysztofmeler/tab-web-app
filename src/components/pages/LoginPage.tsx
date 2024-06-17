@@ -1,7 +1,14 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
-import { TextInput } from '../forms/TextInput';
+import {
+    Button,
+    Card,
+    FormGroup,
+    H2,
+    Icon,
+    InputGroup,
+} from '@blueprintjs/core';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
 import settings from '../../settings';
@@ -33,7 +40,7 @@ const LoginPage: FC = () => {
             const response = await fetch(`${settings.backendURI}../user`, {
                 method: 'GET',
                 mode: 'cors',
-                redirect: 'manual',
+                redirect: 'error',
                 headers: {
                     Authorization: AuthorizationHeaderFromEmailAndPassword(
                         email,
@@ -76,29 +83,45 @@ const LoginPage: FC = () => {
     }, [success]);
 
     return (
-        <>
-            <h2>Login</h2>
+        <div className="middle spaced">
+            <Card>
+                <H2>Login</H2>
 
-            <TextInput value={email} updateValue={setEmail} label="E-mail" />
-            <TextInput
-              value={password}
-              updateValue={setPassword}
-              label="Password"
-            />
+                <FormGroup>
+                    <InputGroup
+                      aria-label="E-mail"
+                      value={email}
+                      onValueChange={setEmail}
+                      leftElement={<Icon icon="user" />}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <InputGroup
+                      value={password}
+                      aria-label="Password"
+                      onValueChange={setPassword}
+                      leftIcon="projects"
+                      rightElement={
+                            <Button onClick={() => {}} icon="eye-open" />
+                        }
+                    />
+                </FormGroup>
 
-            {invalidCredentials && <p>Invalid credentials provided</p>}
+                <Button
+                  aria-label="Log in"
+                  icon="log-in"
+                  onClick={jsSubmit(signIn)}
+                >
+                    Sign in
+                </Button>
 
-            <button
-              disabled={processing}
-              type="button"
-              onClick={jsSubmit(signIn)}
-            >
-                Sign in
-            </button>
+                <p>or</p>
 
-            <p>or</p>
-            <Link to="/sign-up">Create new account</Link>
-        </>
+                <Link to="/sign-up">
+                    <Button icon="new-person">Create new account</Button>
+                </Link>
+            </Card>
+        </div>
     );
 };
 
