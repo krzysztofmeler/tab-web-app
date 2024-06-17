@@ -1,5 +1,14 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import {
+    Button,
+    Card,
+    FormGroup,
+    H2,
+    InputGroup,
+    Label,
+    TextArea,
+} from '@blueprintjs/core';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
@@ -41,21 +50,38 @@ const AddRecipePage: FC = () => {
     };
 
     return (
-        <>
-            <h1>Add recipe</h1>
+        <div className="middle spaced">
+            <Card>
+                <H2>Add recipe</H2>
 
-            <TextInput value={name} updateValue={setName} label="Name" />
+                <FormGroup>
+                    <Label htmlFor="name-input">Name</Label>
+                    <InputGroup
+                      id="name-input"
+                      value={name}
+                      onValueChange={setName}
+                      title="Name"
+                    />
+                </FormGroup>
 
-            <TextInput
-              value={description}
-              updateValue={setDescription}
-              label="Description"
-            />
+                <FormGroup>
+                    <Label htmlFor="description-input">Description</Label>
+                    <TextArea
+                      id="description-input"
+                      onChange={(e) => setDescription(e.target.value)}
+                      defaultValue={description}
+                    />
+                </FormGroup>
 
-            <button type="button" onClick={jsSubmit(create)}>
-                Create
-            </button>
-        </>
+                <Button
+                  onClick={jsSubmit(create)}
+                  aria-label="Create recipe"
+                  intent="primary"
+                >
+                    Create
+                </Button>
+            </Card>
+        </div>
     );
 };
 
