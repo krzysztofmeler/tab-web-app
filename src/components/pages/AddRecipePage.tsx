@@ -1,11 +1,11 @@
 import {FC, useEffect, useState} from 'react';
 import {
     Button,
-    Card,
+    Card, Checkbox,
     FormGroup,
     H2,
     InputGroup,
-    Label, NumericInput,
+    Label, MenuItem, NumericInput,
     TextArea,
 } from '@blueprintjs/core';
 import { jsSubmit } from '../../utils/js-submit';
@@ -14,6 +14,8 @@ import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook'
 import {useAsyncEffect} from "../../hooks/useAsyncEffect.hook";
 import {BasicSelector} from "../forms/BasicSelector";
 import {Ingredient, Unit} from "../../types/Recipe";
+import {Tag} from "../../types/Tag";
+import {ItemRenderer, MultiSelect} from "@blueprintjs/select";
 
 type IngredientFormData = {
     localId: string;
@@ -41,6 +43,20 @@ const AddRecipePage: FC = () => {
 
     const [ingredients, setIngredients] = useState<IngredientFormData[]>([])
     const [allIngredients, setAllIngredients] = useState<Ingredient[]>([])
+
+    const [allTags, setAllTags] = useState<Tag[]>([]);
+
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+    useAsyncEffect(async () => {
+        if (authData) {
+            const response = await fetch.get('/tag/all', { headers: { Authorization: authData.Authorization } });
+
+            if (response.status === 200) {
+                setAllTags(response.data);
+            }
+        }
+    }, [])
 
     useAsyncEffect(async () => {
         if (authData) {
@@ -74,7 +90,7 @@ const AddRecipePage: FC = () => {
                     name,
                     description,
                     steps,
-                    tags,
+                    tags: [],
                     categories: ['hardcoded in AddRecipePage'], // todo
                 },
                 {
@@ -88,6 +104,10 @@ const AddRecipePage: FC = () => {
             if (response.status === 200) {
 
                 const recipeId = response.data.id;
+
+                selectedTags.forEach(tag => {
+                    fetch.post(`recipe/${recipeId}/tags/${tag.id}`, null, { headers: { Authorization: authData.Authorization } });
+                })
 
                 ingredients.forEach(ingredient => {
 
@@ -126,6 +146,18 @@ const AddRecipePage: FC = () => {
         setIngredientId(null);
         setIngredients([...ingredients, newIngredient]);
     }
+
+
+    const handleTagClick = (tagId: number, checked: boolean) => {
+        if (checked) {
+            const tag: Tag = allTags.find(t => t.id === tagId)!;
+
+            setSelectedTags([...selectedTags, tag]);
+        } else {
+            setSelectedTags(selectedTags.filter(t => t.id !== tagId));
+        }
+    }
+
 
     return (
         <div className="middle spaced">
@@ -167,7 +199,22 @@ const AddRecipePage: FC = () => {
                 <BasicSelector values={units.map(u => ([u.id.toString(), u.unit]))} value={ingredientUnitId} updateValue={v => setIngredientUnitId(v)} label={'Unit'} />
 
                 <Button onClick={jsSubmit(addIngredient)} icon={'add'}>Add ingredient</Button>
+
+
                 </div>
+
+                <br />
+
+                    <p>Tags:</p>
+
+                    <br />
+
+                    { allTags.map(tag => <div className={'flex'} key={tag.id}>
+                    <Checkbox id={`tag-select-${tag.id}`} onChange={e => handleTagClick(tag.id, e.target.checked)} />
+                    <Label htmlFor={`tag-select-${tag.id}`}>{tag.tag}</Label>
+                        <br />
+                    </div>) }
+
 
                 <br />
 
