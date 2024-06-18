@@ -27,4 +27,14 @@ type Comment = {
     comment: string;
 };
 
-export type { Recipe, RecipeWithOwner, Rating, Comment };
+type Unit = {
+    id: number,
+    unit: string,
+}
+
+type Ingredient = {
+    id: number;
+    ingredient: string;
+}
+
+export type { Recipe, RecipeWithOwner, Rating, Comment, Unit, Ingredient };
