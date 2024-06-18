@@ -4,6 +4,7 @@ import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { Recipe } from '../../types/Recipe';
+import {Card, H2, UL} from "@blueprintjs/core";
 
 const RecipeListPage: FC = () => {
     const { data: authData } = useAuthContextRedirect();
@@ -23,26 +24,32 @@ const RecipeListPage: FC = () => {
     }, []);
 
     return (
-        <>
-            <h2>Recipe list</h2>
 
-            <ul>
+            <div className={'middle spaced'}>
+                <H2>Recipe list</H2>
+
                 {recipes.map((recipe) => (
+
                     <Link
                       key={recipe.id}
                       to={`/recipe/${recipe.id}/${encodeURIComponent(
                             recipe.name,
                         )}`}
                     >
-                        <p>{recipe.name}</p>
+
+                        <div className={'spaced middle'}>
+                        <Card>
+                        <p className={'bp5-text-large'}>{recipe.name}</p>
                         <p>
                             {recipe.description.slice(0, 120)}
                             {recipe.description.length > 120 ? '...' : ''}
                         </p>
+                        </Card>
+                        </div>
                     </Link>
+
                 ))}
-            </ul>
-        </>
+            </div>
     );
 };
 

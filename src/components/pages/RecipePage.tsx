@@ -6,6 +6,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { Comment, Rating, Recipe } from '../../types/Recipe';
 import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
+import {Button, Card, H2, InputGroup} from "@blueprintjs/core";
 
 type RatingDisplay = {
     rating: number;
@@ -89,6 +90,22 @@ const RecipePage: FC = () => {
             comment,
             recipeId: id,
         });
+
+        if (response.status === 200) {
+
+          setComment("");
+
+          const addedCommentData = response.data as Comment;
+
+          const newCommentDisplayData: CommentDisplay = {
+            id: addedCommentData.id,
+            comment: addedCommentData.comment,
+            date: new Date().toISOString(),
+            creator: authData.email,
+          }
+
+          setComments([...comments, newCommentDisplayData])
+        }
     };
 
     if (recipe === null) {
@@ -96,11 +113,14 @@ const RecipePage: FC = () => {
     }
 
     return (
-        <>
-            <h2>Recipe</h2>
+        <div className={'middle spaced'}>
+            <H2>Recipe</H2>
 
-            <p>{recipe.name}</p>
-            <p>Score: {avgScore}</p>
+          <Card>
+
+
+            <p className={'bp5-text-large'}>{recipe.name}</p>
+            { ratings.length && <p>Score: {avgScore}</p> }
             <p>{recipe.description}</p>
             {recipe.categories.map((c) => (
                 <p key={c}>Category: {c}</p>
@@ -113,35 +133,47 @@ const RecipePage: FC = () => {
                 ))}
             </ol>
 
-            <p>Rating:</p>
-            <ul>
-                {ratings.map((r) => (
+            { ratings.length && <>
+                <p>Rating:</p>
+                <ul>
+                  {ratings.map((r) => (
                     <li key={r.id}>
-                        {r.rating.toString()} by {r.creator} as {r.date}
+                      {r.rating.toString()} by {r.creator} as {r.date}
                     </li>
-                ))}
-            </ul>
+                  ))}
+                </ul>
+            </> }
 
-            <p>Comments:</p>
-            <ul>
-                {comments.map((c) => (
+            { ratings.length === 0 && <p>No reviews yet.</p> }
+
+
+
+            { comments.length && <>
+              <p>Comments:</p>
+              <ul>
+                  {comments.map((c) => (
                     <li key={c.id}>
-                        {c.creator} as {c.date} wrote:
-                        <br />
-                        {c.comment}
-                    </li>
+                  {c.creator} as {c.date} wrote:
+                  <br />
+                  {c.comment}
+                </li>
                 ))}
-            </ul>
+              </ul>
+            </>
+            }
 
-            <TextInput
-              value={comment}
-              updateValue={setComment}
-              label="New comment:"
-            />
-            <button type="button" onClick={jsSubmit(addComment)}>
-                Add comment
-            </button>
-        </>
+            { comments.length === 0 && <p>No comments yet</p> }
+
+            <div className={'flex'}>
+
+            <InputGroup value={comment} onChange={(e) => setComment(e.target.value)} aria-label={'New comment content'} />
+
+            <Button icon={'add'} onClick={jsSubmit(addComment)}>Add comment</Button>
+            </div>
+
+          </Card>
+
+        </div>
     );
 };
 
