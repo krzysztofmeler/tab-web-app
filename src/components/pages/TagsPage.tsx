@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { fetch } from '../../hooks/useRequest.hook';
-import { TextInput } from '../forms/TextInput';
-import { jsSubmit } from '../../utils/js-submit';
 import { Tag } from '../../types/Tag';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
+import {Button, Card, Flex, Group, Text} from "@mantine/core";
+import {Link} from "react-router-dom";
 
 const TagsPage: FC = () => {
     const [tagName, setTagName] = useState('');
@@ -42,28 +42,46 @@ const TagsPage: FC = () => {
         })();
     };
 
+    const deleteTag = (id: number) => {
+
+    }
+
     return (
-        <>
-            <h2>Tags: Administrative functions</h2>
+        <Flex maw={800} gap={20} mx={'auto'} my={50} direction={'column'} justify={'stretch'}>
+          <Flex justify={'space-between'}>
 
-            <TextInput
-              value={tagName}
-              updateValue={setTagName}
-              label="New tag name"
-            />
+            <Text component={'h2'} size={'xl'}>Tags</Text>
 
-            <button type="button" onClick={jsSubmit(addNewTag)}>
-                Add new tag
-            </button>
+            <Button component={Link} to={'/administration/create-tag'}>Create tag</Button>
 
-            <br />
+          </Flex>
 
-            <ul>
-                {tags.map((tag) => (
-                    <li key={tag.id}>{tag.tag}</li>
-                ))}
-            </ul>
-        </>
+          <Flex direction={'column'} gap={15}>
+            { tags.map(tag => (
+
+              <Card key={tag.id}
+                    style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
+
+              >
+                <Flex justify={'space-between'} align={'center'}>
+                  <Text>{tag.tag}</Text>
+
+                  <Group gap={15}>
+                    <Button variant={'light'} onClick={() => deleteTag(tag.id)}>
+                      Delete
+                    </Button>
+                    <Button component={Link} to={`/administration/edit-tag/${tag.id}`}>
+                      Edit
+                    </Button>
+                  </Group>
+                </Flex>
+              </Card>
+
+            )) }
+          </Flex>
+
+
+        </Flex>
     );
 };
 
