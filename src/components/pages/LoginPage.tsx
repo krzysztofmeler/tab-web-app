@@ -1,11 +1,11 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
-import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
 import settings from '../../settings';
 import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
+import {Button, Card, Space, Text, TextInput} from "@mantine/core";
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -76,29 +76,47 @@ const LoginPage: FC = () => {
     }, [success]);
 
     return (
-        <>
-            <h2>Login</h2>
+        <Card
+          style={{ boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.15)' }}
+          maw={600}
+          mx={'auto'}
+          my={50}
+          p={30}
 
-            <TextInput value={email} updateValue={setEmail} label="E-mail" />
+        >
+
+            <Text component={'h2'} size={'xl'}>Login</Text>
+
+            <Space h={20}/>
+
+            <TextInput value={email} onChange={e => setEmail(e.target.value)} label="E-mail" />
+
+            <Space h={10} />
+
             <TextInput
               value={password}
-              updateValue={setPassword}
+              onChange={e => setPassword(e.target.value)}
               label="Password"
             />
 
             {invalidCredentials && <p>Invalid credentials provided</p>}
 
-            <button
+            <Space h={20} />
+
+
+            <Button
               disabled={processing}
               type="button"
               onClick={jsSubmit(signIn)}
             >
                 Sign in
-            </button>
+            </Button>
 
-            <p>or</p>
-            <Link to="/sign-up">Create new account</Link>
-        </>
+            <Space h={20} />
+            <Text mx={'auto'} c={'gray'}>or</Text>
+            <Space h={20} />
+            <Button variant={'light'} component={Link} to={'/sign-up'}>Create new account</Button>
+        </Card>
     );
 };
 
