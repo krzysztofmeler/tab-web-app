@@ -13,12 +13,19 @@ import { MyProfilePage } from './components/pages/MyProfilePage';
 import { Page } from './components/Page';
 import { AdministrativeFunctionsPage } from './components/pages/AdministrativeFunctionsPage';
 import { TagsPage } from './components/pages/TagsPage';
+import {createTheme, MantineProvider} from "@mantine/core";
+
+const theme = createTheme({
+    fontFamily: 'Poppins, Open Sans, sans-serif',
+});
 
 const root = ReactDOM.createRoot(
     document.getElementById('react-page-root') as HTMLElement,
 );
 root.render(
     <React.StrictMode>
+        <MantineProvider theme={theme}>
+
         <RouterProvider
           router={createBrowserRouter([
                 {
@@ -69,5 +76,6 @@ root.render(
                 },
             ])}
         />
+        </MantineProvider>
     </React.StrictMode>,
 );

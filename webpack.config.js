@@ -54,6 +54,10 @@ module.exports = {
                 test: /\.sass$/,
                 use: ['style-loader', 'css-loader', 'sass-loader'],
             },
+            {
+                test: /\.(png|jpeg|jpg)/,
+                type: 'asset/inline',
+            },
         ],
     },
     resolve: {
