@@ -1,39 +1,60 @@
-import { FC, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router';
-import { AuthContext, Role } from '../../AuthContextType';
-import { useEffectOnce } from '../../hooks/useEffectOnce.hook';
+import React, {FC, useContext} from 'react';
+import {Link} from 'react-router-dom';
+import {useNavigate} from 'react-router';
+import {AuthContext, Role} from '../../AuthContextType';
+import {useEffectOnce} from '../../hooks/useEffectOnce.hook';
+import {Badge, Button, Card, Flex, Image, Space, Text, useMantineTheme} from "@mantine/core";
+import userIcon from '../../assets/user-icon.png';
+import {useAuthContextRedirect} from "../../hooks/useAuthContextRedirect.hook";
 
 const MyProfilePage: FC = () => {
-    const { data: authData } = useContext(AuthContext);
+    const  auth = useAuthContextRedirect();
+
+    const {colors} = useMantineTheme()
 
     const navigate = useNavigate();
 
-    useEffectOnce(() => {
-        if (authData === null) {
-            navigate('/sign-in');
-        }
-    });
+    const logout = () => {
+      auth.update(null);
+      navigate('/');
+    }
 
-    if (authData === null) {
+    if (auth.data === null) {
         return <>You have to login first.</>;
     }
 
+    const isAdmin = auth.data.roles.includes(Role.ADMIN);
+
+    // krzysztofmeler@vp.pl
     return (
-        <>
-            <p>My Profile Page</p>
-            <p>{authData.email}</p>
-            <p>roles: </p>
-            <ul>
-                {authData.roles.map((role) => (
-                    <li key={role}>{role}</li>
-                ))}
-            </ul>
-            <Link to="/add-recipe">Create recipe</Link>
-            {authData.roles.includes(Role.ADMIN) && (
-                <Link to="/administration">Administrative functions</Link>
-            )}
-        </>
+      <Flex direction={'column'} gap={20} maw={800} mx={'auto'} my={40}>
+        <Flex justify={'space-between'} align={'center'}>
+          <Text component={'h2'} size={'lg'}>
+            My profile
+          </Text>
+
+          <Button onClick={() => logout()}>
+            Logout
+          </Button>
+        </Flex>
+        <Card style={{ boxShadow: '0 0 30px 0 rgba(0, 0, 0, 0.15)' }} p={30}>
+
+          <Flex gap={20} align={'center'}>
+            <Image width={60} h={60} src={userIcon} />
+            <Text>{ auth.data.email }</Text>
+            { isAdmin ? (<Badge bg={colors.red[8]}>ADMIN</Badge>) : (<Badge>USER</Badge>) }
+          </Flex>
+        </Card>
+
+        <Flex gap={20}>
+          <Button component={Link} to={'/add-recipe'}>Create recipe</Button>
+        </Flex>
+
+        { isAdmin && (
+          <Button maw={300} bg={colors.red[8]} component={Link} to={'/administration'}>Administrative functions</Button>
+        ) }
+      </Flex>
+
     );
 };
 

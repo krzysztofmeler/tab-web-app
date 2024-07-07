@@ -14,7 +14,7 @@ type AuthData = {
 
 type AuthContextType = {
     data: AuthData | null;
-    update: (authData: AuthData) => void;
+    update: (authData: AuthData | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
