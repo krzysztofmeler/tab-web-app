@@ -1,11 +1,11 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Button, Card, Checkbox, Space, Text, TextInput } from '@mantine/core';
+import { Link } from 'react-router-dom';
 import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext, Role } from '../../AuthContextType';
 import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
-import {Button, Card, Checkbox, Space, Text, TextInput} from "@mantine/core";
-import {Link} from "react-router-dom";
 
 const SignUpPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -57,49 +57,56 @@ const SignUpPage: FC = () => {
     }, [success]);
 
     return (
-      <Card
-        style={{ boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.15)' }}
-        maw={600}
-        mx={'auto'}
-        my={50}
-        p={30}
+        <Card
+          style={{ boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.15)' }}
+          maw={600}
+          mx="auto"
+          my={50}
+          p={30}
+        >
+            <Text component="h2" size="xl">
+                Sign up
+            </Text>
 
-      >
+            <Space h={20} />
 
-          <Text component={'h2'} size={'xl'}>Sign up</Text>
+            <TextInput
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              label="E-mail"
+            />
 
-          <Space h={20}/>
+            <Space h={10} />
 
-          <TextInput value={email} onChange={e => setEmail(e.target.value)} label="E-mail" />
+            <TextInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              label="Password"
+            />
 
-          <Space h={10} />
+            <Space h={20} />
 
-          <TextInput
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            label="Password"
-          />
+            <Checkbox label="I accept terms and conditions of services" />
 
-          <Space h={20} />
+            <Space h={20} />
 
-          <Checkbox label={'I accept terms and conditions of services'} />
+            <Button
+              disabled={processing}
+              type="button"
+              onClick={jsSubmit(signUp)}
+            >
+                Create account
+            </Button>
 
-          <Space h={20} />
-
-
-          <Button
-            disabled={processing}
-            type="button"
-            onClick={jsSubmit(signUp)}
-          >
-              Create account
-          </Button>
-
-          <Space h={20} />
-          <Text mx={'auto'} c={'gray'}>or</Text>
-          <Space h={20} />
-          <Button variant={'light'} component={Link} to={'/sign-in'}>Sign in with existing account</Button>
-      </Card>
+            <Space h={20} />
+            <Text mx="auto" c="gray">
+                or
+            </Text>
+            <Space h={20} />
+            <Button variant="light" component={Link} to="/sign-in">
+                Sign in with existing account
+            </Button>
+        </Card>
     );
 };
 

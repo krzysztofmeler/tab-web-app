@@ -1,6 +1,5 @@
-import React, { createContext, FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { useNavigate } from 'react-router';
 import {
     AppShell,
     Burger,
@@ -14,7 +13,6 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
     AuthContext,
-    AuthContextType,
     AuthData,
     localStorageKeys,
     Role,
@@ -23,34 +21,27 @@ import settings from '../settings';
 import logo from '../assets/my-recipes-logo.png';
 
 const Page: FC = () => {
-    const [authData, setAuthData] = useState<AuthData | null>(null);
+    let authDataFromStorage: AuthData | null = null;
 
-    const navigate = useNavigate();
+    if (
+      localStorage.getItem(localStorageKeys.email) &&
+      localStorage.getItem(localStorageKeys.password) &&
+      localStorage.getItem(localStorageKeys.roles) &&
+      localStorage.getItem(localStorageKeys.Authorization)
+    ) {
+        authDataFromStorage = {
+            email: localStorage.getItem(localStorageKeys.email)!,
+            password: localStorage.getItem(localStorageKeys.password)!,
+            roles: localStorage
+              .getItem(localStorageKeys.roles)!
+              .split(',') as Role[],
+            Authorization: localStorage.getItem(
+              localStorageKeys.Authorization,
+            )!,
+        };
+    }
 
-    useEffect(() => {
-        if (
-            localStorage.getItem(localStorageKeys.email) &&
-            localStorage.getItem(localStorageKeys.password) &&
-            localStorage.getItem(localStorageKeys.roles) &&
-            localStorage.getItem(localStorageKeys.Authorization)
-        ) {
-            const authDataFromStorage: AuthData = {
-                email: localStorage.getItem(localStorageKeys.email)!,
-                password: localStorage.getItem(localStorageKeys.password)!,
-                roles: localStorage
-                    .getItem(localStorageKeys.roles)!
-                    .split(',') as Role[],
-                Authorization: localStorage.getItem(
-                    localStorageKeys.Authorization,
-                )!,
-            };
-
-            console.dir({ authDataFromStorage });
-
-            setAuthData(authDataFromStorage);
-            navigate('/');
-        }
-    }, []);
+    const [authData, setAuthData] = useState<AuthData | null>(authDataFromStorage);
 
     const authDataUpdate = useMemo(
         () => (data: AuthData | null) => {
@@ -109,7 +100,7 @@ const Page: FC = () => {
                     <Group
                       flex={1}
                       maw={900}
-                      mx={'auto'}
+                      mx="auto"
                       style={{ justifyContent: 'center' }}
                       h="100%"
                     >
@@ -155,14 +146,27 @@ const Page: FC = () => {
                                     Recipes
                                 </Button>
 
-                                <Button
-                                  fw={500}
-                                  variant="subtle"
-                                  component={Link}
-                                  to={`${settings.browserBaseURL}/sign-in`}
-                                >
-                                    Sign in
-                                </Button>
+                                { authData && (
+                                  <Button
+                                    fw={500}
+                                    variant="subtle"
+                                    component={Link}
+                                    to={`${settings.browserBaseURL}/my-profile`}
+                                  >
+                                      My profile
+                                  </Button>
+                                ) }
+                                { !authData && (
+                                  <Button
+                                    fw={500}
+                                    variant="subtle"
+                                    component={Link}
+                                    to={`${settings.browserBaseURL}/sign-in`}
+                                  >
+                                      Sign in
+                                  </Button>
+                                ) }
+
                             </Flex>
                         </Group>
                     </Group>
@@ -194,12 +198,11 @@ const Page: FC = () => {
                 <AppShell.Footer
                   style={{ boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.15)' }}
                 >
-                    <Flex align={'center'} justify={'center'} p={6}>
-                        <Text size={'sm'} c={colors.gray[8]}>
+                    <Flex align="center" justify="center" p={6}>
+                        <Text size="sm" c={colors.gray[8]}>
                             &copy; recipes.inc whatever
                         </Text>
                     </Flex>
-
                 </AppShell.Footer>
             </AppShell>
         </AuthContext.Provider>

@@ -1,11 +1,11 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
+import { Button, Card, Space, Text, TextInput } from '@mantine/core';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
 import settings from '../../settings';
 import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
-import {Button, Card, Space, Text, TextInput} from "@mantine/core";
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
@@ -79,30 +79,33 @@ const LoginPage: FC = () => {
         <Card
           style={{ boxShadow: '0 0 20px 0 rgba(0, 0, 0, 0.15)' }}
           maw={600}
-          mx={'auto'}
+          mx="auto"
           my={50}
           p={30}
-
         >
+            <Text component="h2" size="xl">
+                Login
+            </Text>
 
-            <Text component={'h2'} size={'xl'}>Login</Text>
+            <Space h={20} />
 
-            <Space h={20}/>
-
-            <TextInput value={email} onChange={e => setEmail(e.target.value)} label="E-mail" />
+            <TextInput
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              label="E-mail"
+            />
 
             <Space h={10} />
 
             <TextInput
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
             />
 
             {invalidCredentials && <p>Invalid credentials provided</p>}
 
             <Space h={20} />
-
 
             <Button
               disabled={processing}
@@ -113,9 +116,13 @@ const LoginPage: FC = () => {
             </Button>
 
             <Space h={20} />
-            <Text mx={'auto'} c={'gray'}>or</Text>
+            <Text mx="auto" c="gray">
+                or
+            </Text>
             <Space h={20} />
-            <Button variant={'light'} component={Link} to={'/sign-up'}>Create new account</Button>
+            <Button variant="light" component={Link} to="/sign-up">
+                Create new account
+            </Button>
         </Card>
     );
 };

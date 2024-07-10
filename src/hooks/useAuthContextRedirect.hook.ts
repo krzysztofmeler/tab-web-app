@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { AuthContext, AuthContextType } from '../AuthContextType';
+import { AuthContextType } from '../AuthContextType';
 import { useAuthContext } from './useAuthContext.hook';
 
 const useAuthContextRedirect = (): AuthContextType => {
