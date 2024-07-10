@@ -14,6 +14,7 @@ import { MyProfilePage } from './components/pages/MyProfilePage';
 import { Page } from './components/Page';
 import { AdministrativeFunctionsPage } from './components/pages/AdministrativeFunctionsPage';
 import { TagsPage } from './components/pages/TagsPage';
+import {CreateTagPage} from "./components/pages/CreateTagPage";
 
 const theme = createTheme({
     fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -70,6 +71,10 @@ root.render(
                             {
                                 path: '/administration/tags',
                                 element: <TagsPage />,
+                            },
+                            {
+                                path: '/administration/create-tag',
+                                element: <CreateTagPage />,
                             },
                         ],
                     },
