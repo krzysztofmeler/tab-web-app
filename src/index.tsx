@@ -15,6 +15,8 @@ import { Page } from './components/Page';
 import { AdministrativeFunctionsPage } from './components/pages/AdministrativeFunctionsPage';
 import { TagsPage } from './components/pages/TagsPage';
 import {CreateTagPage} from "./components/pages/CreateTagPage";
+import {UnitsPage} from "./components/pages/UnitsPage";
+import {CreateUnitPage} from "./components/pages/CreateUnitPage";
 
 const theme = createTheme({
     fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -75,6 +77,14 @@ root.render(
                             {
                                 path: '/administration/create-tag',
                                 element: <CreateTagPage />,
+                            },
+                            {
+                                path: '/administration/units',
+                                element: <UnitsPage />,
+                            },
+                            {
+                                path: '/administration/create-unit',
+                                element: <CreateUnitPage />,
                             },
                         ],
                     },

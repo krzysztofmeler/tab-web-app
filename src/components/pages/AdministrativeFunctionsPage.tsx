@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
-import {Button, Card, Flex, Group, Text} from "@mantine/core";
+import {Button, Card, Flex, Group, Space, Text} from "@mantine/core";
 
 const AdministrativeFunctionsPage: FC = () => {
     const { data: authData } = useAuthContextRedirect();
@@ -16,6 +16,9 @@ const AdministrativeFunctionsPage: FC = () => {
 
             <Card                   style={{ boxShadow: '0 0 30px 0 rgba(0, 0, 0, 0.15)' }}>
               <Button maw={200} component={Link} to={'/administration/tags'}>Tags</Button>
+              <Space h={20} />
+              <Button maw={200} component={Link} to={'/administration/units'}>Units</Button>
+
             </Card>
         </Flex>
     );
