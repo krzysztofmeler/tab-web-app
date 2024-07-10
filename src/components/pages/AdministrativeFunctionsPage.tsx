@@ -18,6 +18,8 @@ const AdministrativeFunctionsPage: FC = () => {
               <Button maw={200} component={Link} to={'/administration/tags'}>Tags</Button>
               <Space h={20} />
               <Button maw={200} component={Link} to={'/administration/units'}>Units</Button>
+              <Space h={20} />
+              <Button maw={200} component={Link} to={'/administration/ingredients'}>Ingredients</Button>
 
             </Card>
         </Flex>
