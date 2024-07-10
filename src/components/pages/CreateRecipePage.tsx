@@ -6,7 +6,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext } from '../../AuthContextType';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 
-const AddRecipePage: FC = () => {
+const CreateRecipePage: FC = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
@@ -59,4 +59,4 @@ const AddRecipePage: FC = () => {
     );
 };
 
-export { AddRecipePage };
+export { CreateRecipePage };

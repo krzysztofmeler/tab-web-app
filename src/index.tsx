@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, MantineProvider } from '@mantine/core';
 import { RecipeListPage } from './components/pages/RecipeListPage';
 import { RecipePage } from './components/pages/RecipePage';
-import { AddRecipePage } from './components/pages/AddRecipePage';
+import { CreateRecipePage } from './components/pages/CreateRecipePage';
 import { EditRecipePage } from './components/pages/EditRecipePage';
 import { MainPage } from './components/pages/MainPage';
 import { SignUpPage } from './components/pages/SignUpPage';
@@ -61,8 +61,8 @@ root.render(
                                 element: <RecipePage />,
                             },
                             {
-                                path: '/add-recipe',
-                                element: <AddRecipePage />,
+                                path: '/create-recipe',
+                                element: <CreateRecipePage />,
                             },
                             {
                                 path: '/edit-recipe',

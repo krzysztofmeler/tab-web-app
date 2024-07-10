@@ -57,7 +57,7 @@ const MyProfilePage: FC = () => {
             </Card>
 
             <Flex gap={20}>
-                <Button component={Link} to="/add-recipe">
+                <Button component={Link} to="/create-recipe">
                     Create recipe
                 </Button>
             </Flex>
