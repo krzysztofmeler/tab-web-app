@@ -4,7 +4,7 @@ import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { Recipe } from '../../types/Recipe';
-import {Button, Card, Flex, MultiSelect, Select, Space, Text, TextInput} from "@mantine/core";
+import {Button, Card, Flex, MultiSelect, Pagination, Select, Space, Text, TextInput} from "@mantine/core";
 
 const RecipeListPage: FC = () => {
     const { data: authData } = useAuthContextRedirect();
@@ -44,7 +44,13 @@ const RecipeListPage: FC = () => {
           } else {
               return true;
           }
-      })
+      });
+
+      const pageSize = 5;
+      const [page, setPage] = useState(1);
+      let pageCount = Math.ceil(filteredRecipes.length / pageSize);
+
+      const recipesPage = filteredRecipes.slice((page - 1) * pageSize, page * pageSize);
 
     return (
         <Flex maw={1200} my={50} mx={'auto'} gap={20} direction={'column'}>
@@ -56,7 +62,7 @@ const RecipeListPage: FC = () => {
                 <MultiSelect w={340} onChange={setSelectedCategories} label={'Categories'} multiple data={categories2} value={selectedCategories} />
             </Flex>
 
-                {filteredRecipes.map((recipe) => (
+                {recipesPage.map((recipe) => (
                         <Card style={{boxShadow: '0 0 5px 0 #ddd'}}>
                             <Text size={'lg'} style={{ textDecoration: '' }}>
                                 { recipe.name }
@@ -74,6 +80,8 @@ const RecipeListPage: FC = () => {
                             <Button maw={120} variant={'light'} component={Link} to={`/recipe/${recipe.id}/${encodeURIComponent(recipe.name)}`}>Show</Button>
                         </Card>
                 ))}
+
+            <Pagination total={pageCount} value={page} onChange={setPage} />
         </Flex>
     );
 };
