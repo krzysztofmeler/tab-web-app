@@ -4,8 +4,19 @@ import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook'
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { Comment, Rating, Recipe } from '../../types/Recipe';
-import { TextInput } from '../forms/TextInput';
 import { jsSubmit } from '../../utils/js-submit';
+import {
+  Button,
+  Card,
+  Center,
+  Flex,
+  List,
+  ListItem,
+  Rating as RatingIndicator,
+  Space,
+  Text,
+  TextInput
+} from "@mantine/core";
 
 type RatingDisplay = {
     rating: number;
@@ -87,8 +98,29 @@ const RecipePage: FC = () => {
     const addComment = async () => {
         const response = await fetch.post('comment/new', {
             comment,
-            recipeId: id,
-        });
+            recipeId: Number.parseInt(id, 10),
+        },
+      { headers: { Authorization: authData.Authorization } });
+
+        if (response.status === 200) {
+          const commentsResponse = await fetch.get(
+            `comment/search/?recipeId=${id}`,
+            { headers: { Authorization: authData.Authorization } },
+          );
+
+          if (commentsResponse.status === 200) {
+            setComments(
+              (commentsResponse.data as unknown as Comment[]).map(
+                (comment) => ({
+                  id: comment.id,
+                  date: comment.date,
+                  comment: comment.comment,
+                  creator: comment.user.email,
+                }),
+              ),
+            );
+          }
+        }
     };
 
     if (recipe === null) {
@@ -96,22 +128,69 @@ const RecipePage: FC = () => {
     }
 
     return (
-        <>
-            <h2>Recipe</h2>
+        <Flex maw={1200} mx={'auto'} my={50} direction={'column'} gap={20}>
+            <Text component={'h2'}>Recipe</Text>
 
-            <p>{recipe.name}</p>
-            <p>Score: {avgScore}</p>
-            <p>{recipe.description}</p>
-            {recipe.categories.map((c) => (
-                <p key={c}>Category: {c}</p>
-            ))}
+            <Card style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
+              <Text size={'xs'} c={'#999'}>Category: { recipe.categories[0] }</Text>
+              <Text size={'xl'}>{ recipe.name }</Text>
+              <Space h={5} />
 
-            <p>Steps:</p>
-            <ol>
-                {recipe.steps.map((step) => (
-                    <li key={step}>{step}</li>
-                ))}
-            </ol>
+
+              <Flex align={'center'} gap={10}>
+
+              { Number.isNaN(avgScore) && <RatingIndicator readOnly c={'#eee'} /> }
+              { !Number.isNaN(avgScore)  && <RatingIndicator readOnly value={avgScore} fractions={10} />}
+
+                <Text size={'xs'} c={'#999'}>{avgScore ? `${avgScore} from (${ratings.length}) ratings` : 'no ratings yet'}</Text>
+              </Flex>
+              <Space h={10} />
+              <Text size={'sm'} c={'#333'}>{ recipe.description }</Text>
+
+              <Space h={20} />
+
+              <Text c={'#222'}>Steps:</Text>
+              <List type={'ordered'}>
+                { recipe.steps.map(step => (
+                  <ListItem c={'#333'}>{step}</ListItem>
+                )) }
+              </List>
+            </Card>
+
+          <Text component={'h2'}>Comments</Text>
+
+          <Flex direction={'column'} gap={10}>
+
+            { comments.length === 0 && (
+              <Card style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
+                <Center>
+                  <Text c={'#333'}>No comments yet</Text>
+                </Center>
+              </Card>
+              ) }
+
+            { comments.map(comment => (
+              <Card key={comment.id} style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
+                <Flex justify={'space-between'}>
+                  <Text size={'xs'} c={'#222'}>{comment.creator}</Text>
+                  <Text size={'xs'} c={'#555'}>{comment.date}</Text>
+                </Flex>
+                <Text>{comment.comment}</Text>
+              </Card>
+            )) }
+
+            <Flex w={'100%'} gap={10}>
+              <TextInput w={'calc(100% - 150px)'} value={comment} onChange={e => setComment(e.target.value)} />
+              <Button w={'140px'} onClick={addComment}>Add comment</Button>
+            </Flex>
+
+
+
+
+          </Flex>
+
+
+
 
             <p>Rating:</p>
             <ul>
@@ -121,27 +200,7 @@ const RecipePage: FC = () => {
                     </li>
                 ))}
             </ul>
-
-            <p>Comments:</p>
-            <ul>
-                {comments.map((c) => (
-                    <li key={c.id}>
-                        {c.creator} as {c.date} wrote:
-                        <br />
-                        {c.comment}
-                    </li>
-                ))}
-            </ul>
-
-            <TextInput
-              value={comment}
-              updateValue={setComment}
-              label="New comment:"
-            />
-            <button type="button" onClick={jsSubmit(addComment)}>
-                Add comment
-            </button>
-        </>
+        </Flex>
     );
 };
 
