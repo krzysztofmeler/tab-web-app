@@ -22,8 +22,9 @@ import { Tag } from '../../types/Tag';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import {Unit} from "../../types/Unit";
 import {Ingredient} from "../../types/Ingredient";
+import {AddIngredientToRecipeRequestData} from "../../types/backend-api/AddIngredientToRecipeRequestData";
 
-type FormTypeIngredient = { ingredientId: number, unitId: number, amount: number };
+type FormTypeIngredient = { ingredientId: number | null, unitId: number | null, amount: number };
 
 type FormType = {
     name: string;
@@ -142,7 +143,7 @@ const CreateRecipePage: FC = () => {
     }
     }, []);
 
-    const handleSubmitOK = async ({ tagIds, category, ...data }: FormType) => {
+    const handleSubmitOK = async ({ tagIds, category, ingredients, ...data }: FormType) => {
         // todo: handle tags upload
         try {
             const response = await fetch.post(
@@ -171,6 +172,18 @@ const CreateRecipePage: FC = () => {
                   },
                 })
               ));
+
+              await Promise.all(ingredients.map(ingredient =>
+                fetch.post(`ingredients/recipes/new`, {
+                  ...ingredient,
+                  recipeId: createdRecipeId,
+                } as AddIngredientToRecipeRequestData, {
+                  auth: {
+                    username: authData!.email,
+                    password: authData!.password,
+                  },
+                })
+              ))
 
               console.log('ok');
             } else {
@@ -227,7 +240,7 @@ const CreateRecipePage: FC = () => {
   });
 
   const addIngredient = () => {
-    setValue('ingredients', [...getValues().ingredients, { ingredientId: 2, unitId: 2, amount: 2 }]);
+    setValue('ingredients', [...getValues().ingredients, { ingredientId: null, unitId: null, amount: 0 }]);
   };
 
   const deleteIngredient = (index: number) => {
@@ -247,6 +260,8 @@ const CreateRecipePage: FC = () => {
     });
 
     setValue('ingredients', newIngredients);
+
+    trigger(`ingredients.${index}.amount`);
   }
 
   const updateIngredientSelection = (index: number, value: string) => {
@@ -259,6 +274,7 @@ const CreateRecipePage: FC = () => {
     });
 
     setValue('ingredients', newIngredients);
+    trigger(`ingredients.${index}.ingredientId`);
   }
 
   const updateIngredientUnit = (index: number, value: string) => {
@@ -271,6 +287,7 @@ const CreateRecipePage: FC = () => {
     });
 
     setValue('ingredients', newIngredients);
+    trigger(`ingredients.${index}.unitId`);
   }
 
     return (
@@ -421,16 +438,16 @@ const CreateRecipePage: FC = () => {
                     <Flex gap={10} direction="column">
                       {ingredients.map((ingredient, index) => (
                         <Flex gap={8} align="start" key={index}>
-                          <Select allowDeselect={false} onChange={(value) => updateIngredientSelection(index, value as string)} value={ingredient.ingredientId.toString()} data={ingredientList!.map(le => ({ value: le.id.toString(), label: le.ingredient }))} placeholder={'Select name'} />
-                          <NumberInput
+                          <Select w={'60%'} error={errors.ingredients?.[index]?.ingredientId?.message} allowDeselect={false} onChange={(value) => updateIngredientSelection(index, value as string)} value={ingredient.ingredientId?.toString() || ''} data={ingredientList!.map(le => ({ value: le.id.toString(), label: le.ingredient }))} placeholder={'Select name'} />
+                          <NumberInput w={'20%'}
+                            error={errors.ingredients?.[index]?.amount?.message}
                             allowNegative={false}
-                            error={errors.steps?.[index]?.message}
                             value={ingredient.amount}
                             onChange={(e) =>
                               updateIngredientAmount(index, e as number)
                             }
                           />
-                          <Select allowDeselect={false} onChange={(value) => updateIngredientUnit(index, value as string)} value={ingredient.unitId.toString()} data={units!.map(le => ({ value: le.id.toString(), label: le.unit }))} placeholder={'Select unit'} />
+                          <Select w={'20%'} error={errors.ingredients?.[index]?.unitId?.message} allowDeselect={false} onChange={(value) => updateIngredientUnit(index, value as string)} value={ingredient.unitId?.toString() || ''} data={units!.map(le => ({ value: le.id.toString(), label: le.unit }))} placeholder={'Select unit'} />
                           <Button
                             onClick={() => deleteIngredient(index)}
                             variant="light"
