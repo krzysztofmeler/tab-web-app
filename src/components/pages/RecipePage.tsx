@@ -173,7 +173,7 @@ const RecipePage: FC = () => {
               <Card key={comment.id} style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
                 <Flex justify={'space-between'}>
                   <Text size={'xs'} c={'#222'}>{comment.creator}</Text>
-                  <Text size={'xs'} c={'#555'}>{comment.date}</Text>
+                  <Text size={'xs'} c={'#555'}>{new Date(comment.date).toLocaleString()}</Text>
                 </Flex>
                 <Text>{comment.comment}</Text>
               </Card>
@@ -189,6 +189,34 @@ const RecipePage: FC = () => {
 
           </Flex>
 
+          <Text component={'h2'}>Ratings</Text>
+
+          <Flex direction={'column'} gap={10}>
+
+            { ratings.length === 0 && (
+              <Card style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
+                <Center>
+                  <Text c={'#333'}>No ratings yet</Text>
+                </Center>
+              </Card>
+            ) }
+
+            { ratings.length > 0 && (
+              <Card style={{ boxShadow: '0 0 5px 0 #bbb' }} p={30}>
+                <Flex direction={'column'} align={'center'} gap={10}>
+                  { ratings.map(rating => (
+                    <Flex gap={15} align={'center'}>
+                      <RatingIndicator readOnly value={rating.rating} />
+                      <Text size={'sm'} c={'#333'}>{rating.creator}</Text>
+                      <Text size={'xs'} c={'#999'}>{rating.date}</Text>
+                    </Flex>
+                  )) }
+                </Flex>
+              </Card>
+
+              ) }
+
+          </Flex>
 
 
 
