@@ -11,7 +11,7 @@ import {
   Center,
   Flex,
   List,
-  ListItem,
+  ListItem, Loader,
   Rating as RatingIndicator,
   Space,
   Text,
@@ -124,7 +124,9 @@ const RecipePage: FC = () => {
     };
 
     if (recipe === null) {
-        return <>Loading recipe...</>;
+        return <Center my={100}>
+          <Loader />
+        </Center>;
     }
 
     return (
@@ -217,17 +219,6 @@ const RecipePage: FC = () => {
               ) }
 
           </Flex>
-
-
-
-            <p>Rating:</p>
-            <ul>
-                {ratings.map((r) => (
-                    <li key={r.id}>
-                        {r.rating.toString()} by {r.creator} as {r.date}
-                    </li>
-                ))}
-            </ul>
         </Flex>
     );
 };
