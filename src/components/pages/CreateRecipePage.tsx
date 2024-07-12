@@ -1,5 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { FC, useState } from 'react';
 import {
     Button,
     Card,
@@ -18,8 +17,6 @@ import { z } from 'zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconTrash } from '@tabler/icons-react';
-import { jsSubmit } from '../../utils/js-submit';
-import { AuthContext } from '../../AuthContextType';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { Tag } from '../../types/Tag';
@@ -128,8 +125,21 @@ const CreateRecipePage: FC = () => {
                 },
             );
 
-            if (response.status !== 200) {
-                // todo
+            if (response.status === 200) {
+              const createdRecipeId = response.data.id;
+
+              await Promise.all(tagIds.map(tagId =>
+                fetch.post(`recipe/${createdRecipeId}/tags/${tagId}`, tagId, {
+                  auth: {
+                    username: authData!.email,
+                    password: authData!.password,
+                  },
+                })
+              ));
+
+              console.log('ok');
+            } else {
+              // todo
             }
         } catch (error) {}
     };
@@ -194,6 +204,7 @@ const CreateRecipePage: FC = () => {
                     />
                     <Space h={20} />
                     <Textarea
+                      autosize
                       maw={700}
                       {...register('description')}
                       label="Description"
@@ -297,7 +308,7 @@ const CreateRecipePage: FC = () => {
                                     </Button>
                                 </Flex>
                             ))}
-                            <Button maw={220} onClick={addStep}>
+                            <Button maw={130} onClick={addStep}>
                                 Add step
                             </Button>
                         </Flex>
