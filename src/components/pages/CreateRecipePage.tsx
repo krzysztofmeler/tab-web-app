@@ -1,26 +1,29 @@
 import React, { FC, useState } from 'react';
 import {
-    Button,
-    Card,
-    Chip,
-    Fieldset,
-    Flex,
-    InputError,
-    InputLabel,
-    Select,
-    Space,
-    Text,
-    Textarea,
-    TextInput,
+  Button,
+  Card,
+  Chip,
+  Fieldset,
+  Flex,
+  InputError, NumberInput,
+  Select,
+  Space,
+  Text,
+  Textarea,
+  TextInput,
 } from '@mantine/core';
 import { z } from 'zod';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconTrash } from '@tabler/icons-react';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { Tag } from '../../types/Tag';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
+import {Unit} from "../../types/Unit";
+import {Ingredient} from "../../types/Ingredient";
+
+type FormTypeIngredient = { ingredientId: number, unitId: number, amount: number };
 
 type FormType = {
     name: string;
@@ -28,6 +31,7 @@ type FormType = {
     category: string;
     steps: string[];
     tagIds: number[];
+  ingredients: FormTypeIngredient[]
 };
 
 const availableCategories: string[] = [
@@ -67,6 +71,13 @@ const CreateRecipePage: FC = () => {
             .array(z.number())
             .min(1, 'Pick at least one tag.')
             .max(6, 'Number of tags should not exceed 6.'),
+        ingredients: z.array(
+          z.object({
+            ingredientId: z.number({ message: 'Ingredient must be selected' }),
+            unitId: z.number({ message: 'Unit must be selected' }),
+            amount: z.number({ message: 'Amount value is invalid' }),
+          })
+        ).min(1, 'At least one ingredient is required.')
     });
 
     const {
@@ -85,6 +96,7 @@ const CreateRecipePage: FC = () => {
             tagIds: [],
             category: undefined,
             steps: [],
+            ingredients: [],
             name: '',
             description: '',
         },
@@ -94,17 +106,40 @@ const CreateRecipePage: FC = () => {
 
     if (!authData) return <>Login first</>; // todo
 
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tagList, setTagList] = useState<Tag[]>([]);
 
-    useAsyncEffect(async () => {
-        const response = await fetch('tag/all', {
+    const [units, setUnits] = useState<Unit[]>([]);
+
+    const [ingredientList, setIngredientList] = useState<Ingredient[]>([]);
+
+
+  useAsyncEffect(async () => {
+        const getTagsResponse = await fetch('tag/all', {
             method: 'GET',
             headers: { Authorization: authData.Authorization },
         });
 
-        if (response.status === 200) {
-            setTags(response.data as Tag[]);
+        if (getTagsResponse.status === 200) {
+            setTagList(getTagsResponse.data as Tag[]);
         }
+
+        const getUnitsResponse = await fetch('/unit/all', {
+          method: 'GET',
+          headers: { Authorization: authData.Authorization },
+        })
+
+      if (getUnitsResponse.status === 200) {
+        setUnits(getUnitsResponse.data as Unit[]);
+      }
+
+    const getIngredientsResponse = await fetch('/ingredient/all', {
+      method: 'GET',
+      headers: { Authorization: authData.Authorization },
+    })
+
+    if (getIngredientsResponse.status === 200) {
+      setIngredientList(getIngredientsResponse.data as Ingredient[]);
+    }
     }, []);
 
     const handleSubmitOK = async ({ tagIds, category, ...data }: FormType) => {
@@ -179,6 +214,65 @@ const CreateRecipePage: FC = () => {
         setValue('steps', newSteps);
     };
 
+
+
+
+  const [ingredients, setIngredients] = useState<FormTypeIngredient[]>([]);
+
+  watch(({ ingredients: formIngredients }) => {
+    if (formIngredients) {
+      // trigger('ingredients');
+      setIngredients(formIngredients as FormTypeIngredient[]);
+    }
+  });
+
+  const addIngredient = () => {
+    setValue('ingredients', [...getValues().ingredients, { ingredientId: 2, unitId: 2, amount: 2 }]);
+  };
+
+  const deleteIngredient = (index: number) => {
+    setValue(
+      'ingredients',
+      getValues().ingredients.filter((_, i) => i !== index),
+    );
+  }
+
+  const updateIngredientAmount = (index: number, value: number) => {
+    const newIngredients = getValues().ingredients.map((ingredient, i) => {
+      if (index === i) {
+        ingredient.amount = value;
+      }
+
+      return ingredient;
+    });
+
+    setValue('ingredients', newIngredients);
+  }
+
+  const updateIngredientSelection = (index: number, value: string) => {
+    const newIngredients = getValues().ingredients.map((ingredient, i) => {
+      if (index === i) {
+        ingredient.ingredientId = Number.parseInt(value);
+      }
+
+      return ingredient;
+    });
+
+    setValue('ingredients', newIngredients);
+  }
+
+  const updateIngredientUnit = (index: number, value: string) => {
+    const newIngredients = getValues().ingredients.map((ingredient, i) => {
+      if (index === i) {
+        ingredient.unitId = Number.parseInt(value);
+      }
+
+      return ingredient;
+    });
+
+    setValue('ingredients', newIngredients);
+  }
+
     return (
         <Flex
           maw={800}
@@ -220,7 +314,7 @@ const CreateRecipePage: FC = () => {
                             field: { onChange, onBlur, value, ref },
                         }) => (
                             <Flex gap={8}>
-                                {tags.map((tag) => (
+                                {tagList.map((tag) => (
                                     <Chip
                                       key={tag.id}
                                       onChange={(checked) => {
@@ -322,6 +416,43 @@ const CreateRecipePage: FC = () => {
                     )}
 
                     <Space h={20} />
+
+                  <Fieldset legend="Ingredients">
+                    <Flex gap={10} direction="column">
+                      {ingredients.map((ingredient, index) => (
+                        <Flex gap={8} align="start" key={index}>
+                          <Select allowDeselect={false} onChange={(value) => updateIngredientSelection(index, value as string)} value={ingredient.ingredientId.toString()} data={ingredientList!.map(le => ({ value: le.id.toString(), label: le.ingredient }))} placeholder={'Select name'} />
+                          <NumberInput
+                            allowNegative={false}
+                            error={errors.steps?.[index]?.message}
+                            value={ingredient.amount}
+                            onChange={(e) =>
+                              updateIngredientAmount(index, e as number)
+                            }
+                          />
+                          <Select allowDeselect={false} onChange={(value) => updateIngredientUnit(index, value as string)} value={ingredient.unitId.toString()} data={units!.map(le => ({ value: le.id.toString(), label: le.unit }))} placeholder={'Select unit'} />
+                          <Button
+                            onClick={() => deleteIngredient(index)}
+                            variant="light"
+                          >
+                            <IconTrash size={18} />
+                          </Button>
+                        </Flex>
+                      ))}
+                      <Button maw={170} onClick={addIngredient}>
+                        Add ingredient
+                      </Button>
+                    </Flex>
+                  </Fieldset>
+
+                  {errors.ingredients?.message && (
+                    <>
+                      <Space h={3} />
+                      <InputError>{errors.ingredients.message}</InputError>
+                    </>
+                  )}
+
+                  <Space h={20} />
 
                     <Button
                       maw={100}
