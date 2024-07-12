@@ -134,6 +134,7 @@
             "object-curly-newline": "off",
             "implicit-arrow-linebreak": "off",
             "function-paren-newline": "off",
+            "react/no-array-index-key": "warn",
             "operator-linebreak": "off",
             "no-empty": "warn",
             "arrow-parens": "off",

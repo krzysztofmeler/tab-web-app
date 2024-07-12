@@ -26,7 +26,6 @@ const TagsPage: FC = () => {
         }
     }, []);
 
-
     const deleteTag = (id: number) => {
         // todo: implement
     };
@@ -51,16 +50,15 @@ const TagsPage: FC = () => {
             </Flex>
 
             <Flex direction="column" gap={15}>
-
-                { tags.length === 0 && (
-                  <Card
-                    style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
-                  >
-                      <Flex h={100} justify={'center'} align={'center'}>
-                          <Text>No tags yet</Text>
-                      </Flex>
-                  </Card>
-                ) }
+                {tags.length === 0 && (
+                    <Card
+                      style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
+                    >
+                        <Flex h={100} justify="center" align="center">
+                            <Text>No tags yet</Text>
+                        </Flex>
+                    </Card>
+                )}
 
                 {tags.map((tag) => (
                     <Card

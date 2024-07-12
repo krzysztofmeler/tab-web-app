@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { fetch } from '../../hooks/useRequest.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
-import {Unit} from "../../types/Unit";
+import { Unit } from '../../types/Unit';
 
 const UnitsPage: FC = () => {
     const [units, setUnits] = useState<Unit[]>([]);
@@ -25,7 +25,6 @@ const UnitsPage: FC = () => {
             setUnits(response.data as Unit[]);
         }
     }, []);
-
 
     const deleteUnit = (id: number) => {
         // todo: implement
@@ -51,16 +50,15 @@ const UnitsPage: FC = () => {
             </Flex>
 
             <Flex direction="column" gap={15}>
-
-                { units.length === 0 && (
-                  <Card
-                    style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
-                  >
-                      <Flex h={100} justify={'center'} align={'center'}>
-                          <Text>No units yet</Text>
-                      </Flex>
-                  </Card>
-                ) }
+                {units.length === 0 && (
+                    <Card
+                      style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
+                    >
+                        <Flex h={100} justify="center" align="center">
+                            <Text>No units yet</Text>
+                        </Flex>
+                    </Card>
+                )}
 
                 {units.map((unit) => (
                     <Card

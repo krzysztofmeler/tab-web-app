@@ -24,24 +24,26 @@ const Page: FC = () => {
     let authDataFromStorage: AuthData | null = null;
 
     if (
-      localStorage.getItem(localStorageKeys.email) &&
-      localStorage.getItem(localStorageKeys.password) &&
-      localStorage.getItem(localStorageKeys.roles) &&
-      localStorage.getItem(localStorageKeys.Authorization)
+        localStorage.getItem(localStorageKeys.email) &&
+        localStorage.getItem(localStorageKeys.password) &&
+        localStorage.getItem(localStorageKeys.roles) &&
+        localStorage.getItem(localStorageKeys.Authorization)
     ) {
         authDataFromStorage = {
             email: localStorage.getItem(localStorageKeys.email)!,
             password: localStorage.getItem(localStorageKeys.password)!,
             roles: localStorage
-              .getItem(localStorageKeys.roles)!
-              .split(',') as Role[],
+                .getItem(localStorageKeys.roles)!
+                .split(',') as Role[],
             Authorization: localStorage.getItem(
-              localStorageKeys.Authorization,
+                localStorageKeys.Authorization,
             )!,
         };
     }
 
-    const [authData, setAuthData] = useState<AuthData | null>(authDataFromStorage);
+    const [authData, setAuthData] = useState<AuthData | null>(
+        authDataFromStorage,
+    );
 
     const authDataUpdate = useMemo(
         () => (data: AuthData | null) => {
@@ -146,27 +148,26 @@ const Page: FC = () => {
                                     Recipes
                                 </Button>
 
-                                { authData && (
-                                  <Button
-                                    fw={500}
-                                    variant="subtle"
-                                    component={Link}
-                                    to={`${settings.browserBaseURL}/my-profile`}
-                                  >
-                                      My profile
-                                  </Button>
-                                ) }
-                                { !authData && (
-                                  <Button
-                                    fw={500}
-                                    variant="subtle"
-                                    component={Link}
-                                    to={`${settings.browserBaseURL}/sign-in`}
-                                  >
-                                      Sign in
-                                  </Button>
-                                ) }
-
+                                {authData && (
+                                    <Button
+                                      fw={500}
+                                      variant="subtle"
+                                      component={Link}
+                                      to={`${settings.browserBaseURL}/my-profile`}
+                                    >
+                                        My profile
+                                    </Button>
+                                )}
+                                {!authData && (
+                                    <Button
+                                      fw={500}
+                                      variant="subtle"
+                                      component={Link}
+                                      to={`${settings.browserBaseURL}/sign-in`}
+                                    >
+                                        Sign in
+                                    </Button>
+                                )}
                             </Flex>
                         </Group>
                     </Group>

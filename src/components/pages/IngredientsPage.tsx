@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { fetch } from '../../hooks/useRequest.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
-import {Ingredient} from "../../types/Ingredient";
+import { Ingredient } from '../../types/Ingredient';
 
 const IngredientsPage: FC = () => {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -25,7 +25,6 @@ const IngredientsPage: FC = () => {
             setIngredients(response.data as Ingredient[]);
         }
     }, []);
-
 
     const deleteIngredient = (id: number) => {
         // todo: implement
@@ -51,16 +50,15 @@ const IngredientsPage: FC = () => {
             </Flex>
 
             <Flex direction="column" gap={15}>
-
-                { ingredients.length === 0 && (
-                  <Card
-                    style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
-                  >
-                      <Flex h={100} justify={'center'} align={'center'}>
-                          <Text>No ingredients yet</Text>
-                      </Flex>
-                  </Card>
-                ) }
+                {ingredients.length === 0 && (
+                    <Card
+                      style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
+                    >
+                        <Flex h={100} justify="center" align="center">
+                            <Text>No ingredients yet</Text>
+                        </Flex>
+                    </Card>
+                )}
 
                 {ingredients.map((ingredient) => (
                     <Card
@@ -73,7 +71,9 @@ const IngredientsPage: FC = () => {
                             <Group gap={15}>
                                 <Button
                                   variant="light"
-                                  onClick={() => deleteIngredient(ingredient.id)}
+                                  onClick={() =>
+                                        deleteIngredient(ingredient.id)
+                                    }
                                 >
                                     Delete
                                 </Button>

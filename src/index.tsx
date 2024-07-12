@@ -14,11 +14,11 @@ import { MyProfilePage } from './components/pages/MyProfilePage';
 import { Page } from './components/Page';
 import { AdministrativeFunctionsPage } from './components/pages/AdministrativeFunctionsPage';
 import { TagsPage } from './components/pages/TagsPage';
-import {CreateTagPage} from "./components/pages/CreateTagPage";
-import {UnitsPage} from "./components/pages/UnitsPage";
-import {CreateUnitPage} from "./components/pages/CreateUnitPage";
-import {IngredientsPage} from "./components/pages/IngredientsPage";
-import {CreateIngredientPage} from "./components/pages/CreateIngredientPage";
+import { CreateTagPage } from './components/pages/CreateTagPage';
+import { UnitsPage } from './components/pages/UnitsPage';
+import { CreateUnitPage } from './components/pages/CreateUnitPage';
+import { IngredientsPage } from './components/pages/IngredientsPage';
+import { CreateIngredientPage } from './components/pages/CreateIngredientPage';
 
 const theme = createTheme({
     fontFamily: 'Poppins, Open Sans, sans-serif',
