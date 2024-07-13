@@ -5,6 +5,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { Tag } from '../../types/Tag';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
+import { notifications } from '@mantine/notifications';
 
 const TagsPage: FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -26,8 +27,40 @@ const TagsPage: FC = () => {
         }
     }, []);
 
-    const deleteTag = (id: number) => {
-        // todo: implement
+    const deleteTag = async (id: number) => {
+
+        const response = await fetch.delete(`/tag/${id}`, {
+            headers: { Authorization: authData.Authorization },
+        });
+
+        switch (response.status) {
+            case 204: {
+                notifications.show({
+                    title: 'Success',
+                    message: 'Tag was deleted.',
+                    autoClose: 3000,
+                    color: 'green',
+                })
+
+                setTags(tags.filter(t => t.id !== id));
+            } break;
+            case 500: {
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Tag cannot be deleted because it is used within recipe(s).',
+                    autoClose: 3000,
+                    color: 'orange',
+                })
+            } break;
+            default: {
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Unknown error occurred.',
+                    autoClose: 3000,
+                    color: 'red',
+                })
+            }
+        }
     };
 
     return (
