@@ -4,36 +4,36 @@ import { useNavigate } from 'react-router';
 import { Button, Card, Space, Text, TextInput } from '@mantine/core';
 import { jsSubmit } from '../../utils/js-submit';
 import { AuthContext } from '../../AuthContextType';
-import settings from '../../settings';
 import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
+import { fetch } from '../../hooks/useRequest.hook';
+import { notifications } from '@mantine/notifications';
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [processing, setProcessing] = useState(false);
-    const [error, setError] = useState<unknown>(null);
-    const [success, setSuccess] = useState(false);
-    const [invalidCredentials, setInvalidCredentials] = useState(false);
 
     const { update: setAuthData } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
+    const [disableForm, setDisableForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const signIn = async () => {
-        if (processing) {
+        if (loading) {
             return;
         }
 
-        setProcessing(true);
-        setInvalidCredentials(false);
+        setDisableForm(true);
+        setLoading(true);
 
         try {
             // native fetch is used because axios does not allow disabling of redirect following
-            const response = await fetch(`${settings.backendURI}../user`, {
-                method: 'GET',
-                mode: 'cors',
-                redirect: 'manual',
+            const response = await fetch.get('../user',{
+                fetchOptions: {
+                    mode: 'cors'
+                },
                 headers: {
                     Authorization: AuthorizationHeaderFromEmailAndPassword(
                         email,
@@ -42,38 +42,56 @@ const LoginPage: FC = () => {
                 },
             });
 
-            if (response.status === 200) {
-                const data = await response.json();
+            setLoading(false);
+
+            console.log(response);
+
+            if (response.headers['content-type'] === 'text/html;charset=UTF-8') {
+                notifications.show({
+                    title: 'Invalid credentials',
+                    message: '',
+                    autoClose: 3000,
+                    color: 'red',
+                })
+
+                setDisableForm(false);
+            } else if (response.status === 200 && response.headers['content-type'] === 'application/json') {
+                notifications.show({
+                    title: 'Logged in',
+                    message: '',
+                    autoClose: 3000,
+                    color: 'green',
+                });
 
                 setAuthData({
                     password,
                     email,
-                    roles: data.roles,
+                    roles: response.data.roles,
                     Authorization: AuthorizationHeaderFromEmailAndPassword(
-                        email,
-                        password,
+                      email,
+                      password,
                     ),
-                }); // todo: valid rules from response
-                setSuccess(true);
-            } else if (response.status === 302) {
-                // 302 means invalid credentials
-                setInvalidCredentials(true);
+                });
+
+                setTimeout(() => {
+                    navigate('/my-profile');
+                }, 500);
+            } else {
+                throw new Error();
             }
+
         } catch (error) {
-            console.error(error);
-            setError(error);
-        }
+            notifications.show({
+                title: 'Failed',
+                message: 'Exception, unknown error occurred.',
+                autoClose: 3000,
+                color: 'red',
+            })
 
-        setProcessing(false);
+            setDisableForm(false);
+            setLoading(false);
+        }
     };
-
-    useEffect(() => {
-        if (success) {
-            setTimeout(() => {
-                navigate('/my-profile');
-            }, 500);
-        }
-    }, [success]);
 
     return (
         <Card
@@ -90,6 +108,8 @@ const LoginPage: FC = () => {
             <Space h={20} />
 
             <TextInput
+              disabled={disableForm}
+
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               label="E-mail"
@@ -98,17 +118,18 @@ const LoginPage: FC = () => {
             <Space h={10} />
 
             <TextInput
+              disabled={disableForm}
+
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               label="Password"
             />
 
-            {invalidCredentials && <p>Invalid credentials provided</p>}
-
             <Space h={20} />
 
             <Button
-              disabled={processing}
+              loading={loading}
+              disabled={disableForm}
               type="button"
               onClick={jsSubmit(signIn)}
             >
