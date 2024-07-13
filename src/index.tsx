@@ -19,6 +19,7 @@ import { UnitsPage } from './components/pages/UnitsPage';
 import { CreateUnitPage } from './components/pages/CreateUnitPage';
 import { IngredientsPage } from './components/pages/IngredientsPage';
 import { CreateIngredientPage } from './components/pages/CreateIngredientPage';
+import { EditTagPage } from './components/pages/EditTagPage';
 
 const theme = createTheme({
     fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -79,6 +80,10 @@ root.render(
                             {
                                 path: '/administration/create-tag',
                                 element: <CreateTagPage />,
+                            },
+                            {
+                                path: '/administration/edit-tag/:id',
+                                element: <EditTagPage />,
                             },
                             {
                                 path: '/administration/units',
