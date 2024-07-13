@@ -1,10 +1,12 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Button, Card, Flex, Text, TextInput } from '@mantine/core';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
+import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router';
 
 type FormType = {
     ingredient: string;
@@ -33,22 +35,54 @@ const CreateIngredientPage: FC = () => {
         return <>Login first</>;
     }
 
+
+    const [disableForm, setDisableForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+
+
     const handleSubmitOK = async (data: FormType) => {
+        setDisableForm(true);
+        setLoading(true);
         const response = await fetch('ingredient/new', {
             data,
             method: 'POST',
             headers: { Authorization: authData.Authorization },
         });
 
+        setLoading(false);
+
         if (response.status === 200) {
-            // todo: handle
+            notifications.show({
+                title: 'Success',
+                message: 'Ingredient was created.',
+                autoClose: 3000,
+                color: 'green',
+            });
+
+            setTimeout(() => {
+                navigate('/administration/ingredients');
+            }, 800)
         } else {
-            // todo: handle
+            notifications.show({
+                title: 'Failed',
+                message: 'Unknown error occurred.',
+                autoClose: 3000,
+                color: 'red',
+            })
+
+            setDisableForm(false);
         }
     };
 
     const handleSubmitError = () => {
-        // todo: show notification
+        notifications.show({
+            title: 'Invalid data',
+            message: 'Check provided data, fix errors and try again.',
+            autoClose: 4000,
+            color: 'red',
+        })
     };
 
     return (
@@ -69,6 +103,7 @@ const CreateIngredientPage: FC = () => {
             <Card style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}>
                 <Flex direction="column" gap={20} justify="start">
                     <TextInput
+                      disabled={disableForm}
                       maw={400}
                       {...register('ingredient')}
                       label="Ingredient name"
@@ -76,6 +111,8 @@ const CreateIngredientPage: FC = () => {
                     />
 
                     <Button
+                      loading={loading}
+                      disabled={disableForm}
                       maw={100}
                       onClick={handleSubmit(
                             handleSubmitOK,
