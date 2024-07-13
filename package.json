@@ -140,6 +140,7 @@
             "arrow-parens": "off",
             "no-confusing-arrow": "off",
             "import/extensions": "off",
+            "react/jsx-indent-props": "warn",
             "import/no-unresolved": "off",
             "import/named": "off",
             "import/no-extraneous-dependencies": "off",
