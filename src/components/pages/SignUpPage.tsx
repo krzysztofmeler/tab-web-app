@@ -6,18 +6,35 @@ import { jsSubmit } from '../../utils/js-submit';
 import { fetch } from '../../hooks/useRequest.hook';
 import { AuthContext, Role } from '../../AuthContextType';
 import { AuthorizationHeaderFromEmailAndPassword } from '../../utils/auth';
+import { notifications } from '@mantine/notifications';
 
 const SignUpPage: FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [processing, setProcessing] = useState(false);
-    const [error, setError] = useState<unknown>(null);
-    const [success, setSuccess] = useState(false);
+    const [disableForm, setDisableForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     const { update: setAuthData } = useContext(AuthContext);
 
     const signUp = async () => {
-        setProcessing(true);
+
+        if (!termsAccepted) {
+
+            notifications.show({
+                title: 'Terms must be accepted',
+                message: '',
+                autoClose: 4000,
+                color: 'red',
+            })
+
+            return;
+        }
+
+        setDisableForm(true);
+        setLoading(true);
 
         try {
             const response = await fetch.post('register', {
@@ -25,6 +42,9 @@ const SignUpPage: FC = () => {
                 password,
                 roles: [Role.USER, Role.ADMIN],
             });
+
+            setLoading(false);
+
 
             if (response.status === 200) {
                 setAuthData({
@@ -36,25 +56,35 @@ const SignUpPage: FC = () => {
                         password,
                     ),
                 });
-                setSuccess(true);
+
+                notifications.show({
+                    title: 'Success',
+                    message: 'Account created, logging in.',
+                    autoClose: 3000,
+                    color: 'green',
+                });
+
+                setTimeout(() => {
+                    navigate('/my-profile');
+                }, 1000);
+            } else if (response.status === 400) {
+                notifications.show({
+                    title: 'Invalid data or e-mail not available',
+                    message: '',
+                    autoClose: 4000,
+                    color: 'red',
+                })
+                setDisableForm(false);
+
             }
         } catch (error) {
-            console.error(error);
-            setError(error);
+            setDisableForm(false);
         }
 
-        setProcessing(false);
+        setLoading(false);
     };
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (success) {
-            setTimeout(() => {
-                navigate('/my-profile');
-            }, 1000);
-        }
-    }, [success]);
 
     return (
         <Card
@@ -70,28 +100,32 @@ const SignUpPage: FC = () => {
 
             <Space h={20} />
 
-            <TextInput
-              value={email}
+            <TextInput              disabled={disableForm}
+
+                                    value={email}
               onChange={(e) => setEmail(e.target.value)}
               label="E-mail"
             />
 
             <Space h={10} />
 
-            <TextInput
-              value={password}
+            <TextInput              disabled={disableForm}
+
+                                    value={password}
               onChange={(e) => setPassword(e.target.value)}
               label="Password"
             />
 
             <Space h={20} />
 
-            <Checkbox label="I accept terms and conditions of services" />
+            <Checkbox               disabled={disableForm}
+                                    value={`${termsAccepted}`} onChange={e => setTermsAccepted(e.target.checked)} label="I accept terms and conditions of services" />
 
             <Space h={20} />
 
             <Button
-              disabled={processing}
+              loading={loading}
+              disabled={disableForm}
               type="button"
               onClick={jsSubmit(signUp)}
             >
@@ -103,7 +137,10 @@ const SignUpPage: FC = () => {
                 or
             </Text>
             <Space h={20} />
-            <Button variant="light" component={Link} to="/sign-in">
+            <Button
+
+
+              variant="light" component={Link} to="/sign-in">
                 Sign in with existing account
             </Button>
         </Card>
