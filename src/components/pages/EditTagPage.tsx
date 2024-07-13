@@ -62,13 +62,6 @@ const EditTagPage: FC = () => {
                 }, 500);
             }
         }
-
-        if (response.status === 200) {
-        } else {
-
-        }
-
-        console.log(response.data);
     }, [])
 
     const validationSchema = z.object({
