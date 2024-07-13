@@ -1,15 +1,15 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Blockquote, Button, Card, Flex, Text, TextInput } from '@mantine/core';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
-import { useEffectOnce } from '../../hooks/useEffectOnce.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { AxiosResponse } from 'axios';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { GetTagResponseData } from '../../types/backend-api/GetTagResponseData';
+import { notifications } from '@mantine/notifications';
 
 type FormType = {
     tag: string;
@@ -24,14 +24,48 @@ const EditTagPage: FC = () => {
     }
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useAsyncEffect(async () => {
         const response  = await fetch.get<unknown, AxiosResponse<GetTagResponseData>>(`tag/${id}`, {
             headers: { Authorization: authData.Authorization },
         });
 
+        switch (response.status) {
+            case 200: {
+                setValue('tag', response.data.tag);
+
+            } break;
+            case 404: {
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Tag not found. Download of tag data failed.',
+                    autoClose: 3000,
+                    color: 'orange',
+                })
+
+                setTimeout(() => {
+                    navigate(`/administration/tags`)
+                }, 500);
+            } break;
+            default: {
+
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Unknown error occurred.',
+                    autoClose: 3000,
+                    color: 'red',
+                })
+
+                setTimeout(() => {
+                    navigate(`/administration/tags`)
+                }, 500);
+            }
+        }
+
         if (response.status === 200) {
-            setValue('tag', response.data.tag);
+        } else {
+
         }
 
         console.log(response.data);
@@ -46,7 +80,7 @@ const EditTagPage: FC = () => {
 
     const {
         register,
-        formState: { errors },
+        formState: { errors , isLoading},
         handleSubmit,
       setValue,
     } = useForm<FormType>({
@@ -54,9 +88,16 @@ const EditTagPage: FC = () => {
         mode: 'onTouched',
     });
 
+    const [loading, setLoading] = useState(false)
+    const [ formDisabled, setFormDisabled ] = useState(false);
+
 
 
     const handleSubmitOK = async (data: FormType) => {
+
+        setLoading(true);
+        setFormDisabled(true);
+
         // to modify tag, we need to delete it and create new one
         const response = await fetch.delete(`/tag/${id}`, {
             headers: { Authorization: authData.Authorization },
@@ -71,19 +112,49 @@ const EditTagPage: FC = () => {
                 });
 
                 if (response.status === 200) {
-                    // todo: handle
+                    notifications.show({
+                        title: 'Success',
+                        message: 'Tag was successfully recreated with new name.',
+                        autoClose: 3000,
+                        color: 'green',
+                    })
+
+                    setLoading(false);
+
+                    setTimeout(() => {
+                        navigate(`/administration/tags`);
+                    }, 800)
                 } else {
-                    // todo: handle
+                    notifications.show({
+                        title: 'Failed',
+                        message: 'Tag was deleted but new one was not created.',
+                        autoClose: 3000,
+                        color: 'red',
+                    })
+
+                    setLoading(false);
                 }
             } break;
             case 500: {
-                // todo: notify user that this tag cannot be modified because it's already used within some recipes
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Tag cannot be modified because it is used within at least one recipe.',
+                    autoClose: 3000,
+                    color: 'orange',
+                })
+
+                setLoading(false);
             }
         }
     };
 
     const handleSubmitError = () => {
-        // todo: show notification
+        notifications.show({
+            title: 'Invalid data',
+            message: 'Check provided data, fix errors and try again.',
+            autoClose: 4000,
+            color: 'red',
+        })
     };
 
     return (
@@ -114,6 +185,7 @@ const EditTagPage: FC = () => {
                     </Blockquote>
 
                     <TextInput
+                      disabled={formDisabled}
                       maw={300}
                       {...register('tag')}
                       label="Tag"
@@ -121,6 +193,8 @@ const EditTagPage: FC = () => {
                     />
 
                     <Button
+                      disabled={formDisabled}
+                      loading={loading}
                       maw={100}
                       onClick={handleSubmit(
                             handleSubmitOK,

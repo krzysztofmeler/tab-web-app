@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/main.sass';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { createTheme, MantineProvider } from '@mantine/core';
+import { createTheme, MantineProvider, Notification } from '@mantine/core';
 import { RecipeListPage } from './components/pages/RecipeListPage';
 import { RecipePage } from './components/pages/RecipePage';
 import { CreateRecipePage } from './components/pages/CreateRecipePage';
@@ -20,6 +20,7 @@ import { CreateUnitPage } from './components/pages/CreateUnitPage';
 import { IngredientsPage } from './components/pages/IngredientsPage';
 import { CreateIngredientPage } from './components/pages/CreateIngredientPage';
 import { EditTagPage } from './components/pages/EditTagPage';
+import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
     fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -31,6 +32,8 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <MantineProvider theme={theme}>
+            <Notifications position={'top-center'} />
+
             <RouterProvider
               router={createBrowserRouter([
                     {
