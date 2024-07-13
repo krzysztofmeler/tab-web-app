@@ -22,6 +22,7 @@ import { IngredientsPage } from './components/pages/IngredientsPage';
 import { CreateIngredientPage } from './components/pages/CreateIngredientPage';
 import { EditTagPage } from './components/pages/EditTagPage';
 import { EditUnitPage } from './components/pages/EditUnitPage';
+import { EditIngredientPage } from './components/pages/EditIngredientPage';
 
 const theme = createTheme({
   fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -106,6 +107,10 @@ root.render(
               {
                 path: '/administration/create-ingredient',
                 element: <CreateIngredientPage />,
+              },
+              {
+                path: '/administration/edit-ingredient/:id',
+                element: <EditIngredientPage />,
               },
             ],
           },
