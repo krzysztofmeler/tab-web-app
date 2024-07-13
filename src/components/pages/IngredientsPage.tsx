@@ -5,6 +5,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { Ingredient } from '../../types/Ingredient';
+import { notifications } from '@mantine/notifications';
 
 const IngredientsPage: FC = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -26,8 +27,43 @@ const IngredientsPage: FC = () => {
     }
   }, []);
 
-  const deleteIngredient = (id: number) => {
-    // todo: implement
+  const deleteIngredient = async (id: number) => {
+    const response = await fetch.delete(`/ingredient/${id}`, {
+      headers: { Authorization: authData.Authorization },
+    });
+
+    switch (response.status) {
+      case 204:
+      {
+        notifications.show({
+          title: 'Success',
+          message: 'Ingredient was deleted.',
+          autoClose: 3000,
+          color: 'green',
+        });
+
+        setIngredients(ingredients.filter((ingredient) => ingredient.id !== id));
+      }
+        break;
+      case 500:
+      {
+        notifications.show({
+          title: 'Failed',
+          message: 'Ingredient cannot be deleted because it is used within recipe(s).',
+          autoClose: 3000,
+          color: 'orange',
+        });
+      }
+        break;
+      default: {
+        notifications.show({
+          title: 'Failed',
+          message: 'Unknown error occurred.',
+          autoClose: 3000,
+          color: 'red',
+        });
+      }
+    }
   };
 
   return (
