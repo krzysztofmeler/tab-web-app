@@ -53,7 +53,7 @@ const CreateUnitPage: FC = () => {
         if (response.status === 200) {
             notifications.show({
                 title: 'Success',
-                message: 'Tag was created.',
+                message: 'Unit was created.',
                 autoClose: 3000,
                 color: 'green',
             });
