@@ -24,6 +24,7 @@ import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { Unit } from '../../types/Unit';
 import { Ingredient } from '../../types/Ingredient';
 import { AddIngredientToRecipeRequestData } from '../../types/backend-api/AddIngredientToRecipeRequestData';
+import { notifications } from '@mantine/notifications';
 
 type FormTypeIngredient = {
     ingredientId: number | null;
@@ -151,13 +152,19 @@ const CreateRecipePage: FC = () => {
         }
     }, []);
 
+
+    const [disableForm, setDisableForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+
     const handleSubmitOK = async ({
         tagIds,
         category,
         ingredients,
         ...data
     }: FormType) => {
-        // todo: handle tags upload
+        setDisableForm(true);
+        setLoading(true);
         try {
             const response = await fetch.post(
                 'recipe/new',
@@ -210,15 +217,34 @@ const CreateRecipePage: FC = () => {
                     ),
                 );
 
-                console.log('ok');
+                setLoading(false);
+
+                notifications.show({
+                    title: 'Success',
+                    message: 'Recipe was created.',
+                    autoClose: 3000,
+                    color: 'green',
+                });
             } else {
-                // todo
+                setDisableForm(false);
+
+                notifications.show({
+                    title: 'Failed',
+                    message: 'Unknown error occurred.',
+                    autoClose: 3000,
+                    color: 'red',
+                })
             }
         } catch (error) {}
     };
 
     const handleSubmitError = () => {
-        // todo
+        notifications.show({
+            title: 'Invalid data',
+            message: 'Check provided data, fix errors and try again.',
+            autoClose: 4000,
+            color: 'red',
+        })
     };
 
     const [steps, setSteps] = useState<string[]>([]);
@@ -333,6 +359,7 @@ const CreateRecipePage: FC = () => {
             <Card style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}>
                 <Flex direction="column" justify="start">
                     <TextInput
+                      disabled={disableForm}
                       maw={300}
                       {...register('name')}
                       label="Name of recipe"
@@ -340,6 +367,7 @@ const CreateRecipePage: FC = () => {
                     />
                     <Space h={20} />
                     <Textarea
+                      disabled={disableForm}
                       autosize
                       maw={700}
                       {...register('description')}
@@ -358,6 +386,7 @@ const CreateRecipePage: FC = () => {
                             <Flex gap={8}>
                                 {tagList.map((tag) => (
                                     <Chip
+                                      disabled={disableForm}
                                       key={tag.id}
                                       onChange={(checked) => {
                                             let updatedValue;
@@ -403,6 +432,7 @@ const CreateRecipePage: FC = () => {
                             field: { onChange, onBlur, value, ref },
                         }) => (
                             <Select
+                              disabled={disableForm}
                               maw={300}
                               data={availableCategories}
                               label="Category"
@@ -429,6 +459,7 @@ const CreateRecipePage: FC = () => {
                                         {index + 1}.
                                     </Text>
                                     <TextInput
+                                      disabled={disableForm}
                                       error={errors.steps?.[index]?.message}
                                       w="calc(100% - 80px )"
                                       value={step}
@@ -437,6 +468,7 @@ const CreateRecipePage: FC = () => {
                                         }
                                     />
                                     <Button
+                                      disabled={disableForm}
                                       onClick={() => deleteStep(index)}
                                       variant="light"
                                     >
@@ -444,7 +476,8 @@ const CreateRecipePage: FC = () => {
                                     </Button>
                                 </Flex>
                             ))}
-                            <Button maw={130} onClick={addStep}>
+                            <Button                      disabled={disableForm}
+                                                         maw={130} onClick={addStep}>
                                 Add step
                             </Button>
                         </Flex>
@@ -464,6 +497,7 @@ const CreateRecipePage: FC = () => {
                             {ingredients.map((ingredient, index) => (
                                 <Flex gap={8} align="start" key={index}>
                                     <Select
+                                      disabled={disableForm}
                                       w="60%"
                                       error={
                                             errors.ingredients?.[index]
@@ -488,6 +522,7 @@ const CreateRecipePage: FC = () => {
                                     />
                                     <NumberInput
                                       w="20%"
+                                      disabled={disableForm}
                                       error={
                                             errors.ingredients?.[index]?.amount
                                                 ?.message
@@ -503,6 +538,7 @@ const CreateRecipePage: FC = () => {
                                     />
                                     <Select
                                       w="20%"
+                                      disabled={disableForm}
                                       error={
                                             errors.ingredients?.[index]?.unitId
                                                 ?.message
@@ -525,13 +561,15 @@ const CreateRecipePage: FC = () => {
                                     />
                                     <Button
                                       onClick={() => deleteIngredient(index)}
+                                      disabled={disableForm}
                                       variant="light"
                                     >
                                         <IconTrash size={18} />
                                     </Button>
                                 </Flex>
                             ))}
-                            <Button maw={170} onClick={addIngredient}>
+                            <Button                      disabled={disableForm}
+                                                         maw={170} onClick={addIngredient}>
                                 Add ingredient
                             </Button>
                         </Flex>
@@ -549,6 +587,8 @@ const CreateRecipePage: FC = () => {
                     <Space h={20} />
 
                     <Button
+                      disabled={disableForm}
+                      loading={loading}
                       maw={100}
                       onClick={handleSubmit(
                             handleSubmitOK,
