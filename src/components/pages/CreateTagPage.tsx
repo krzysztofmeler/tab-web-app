@@ -37,14 +37,18 @@ const CreateTagPage: FC = () => {
     }
 
     const [disableForm, setDisableForm] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleSubmitOK = async (data: FormType) => {
         setDisableForm(true);
+        setLoading(true);
         const response = await fetch('tag/new', {
             data,
             method: 'POST',
             headers: { Authorization: authData.Authorization },
         });
+
+        setLoading(false);
 
         if (response.status === 200) {
             notifications.show({
@@ -106,6 +110,7 @@ const CreateTagPage: FC = () => {
                     />
 
                     <Button
+                      loading={loading}
                       disabled={disableForm}
                       maw={100}
                       onClick={handleSubmit(
