@@ -5,6 +5,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
 import { Unit } from '../../types/Unit';
+import { notifications } from '@mantine/notifications';
 
 const UnitsPage: FC = () => {
   const [units, setUnits] = useState<Unit[]>([]);
@@ -26,8 +27,43 @@ const UnitsPage: FC = () => {
     }
   }, []);
 
-  const deleteUnit = (id: number) => {
-    // todo: implement
+  const deleteUnit = async (id: number) => {
+    const response = await fetch.delete(`/unit/${id}`, {
+      headers: { Authorization: authData.Authorization },
+    });
+
+    switch (response.status) {
+      case 204:
+      {
+        notifications.show({
+          title: 'Success',
+          message: 'Unit was deleted.',
+          autoClose: 3000,
+          color: 'green',
+        });
+
+        setUnits(units.filter((unit) => unit.id !== id));
+      }
+        break;
+      case 500:
+      {
+        notifications.show({
+          title: 'Failed',
+          message: 'Unit cannot be deleted because it is used within recipe(s).',
+          autoClose: 3000,
+          color: 'orange',
+        });
+      }
+        break;
+      default: {
+        notifications.show({
+          title: 'Failed',
+          message: 'Unknown error occurred.',
+          autoClose: 3000,
+          color: 'red',
+        });
+      }
+    }
   };
 
   return (
