@@ -21,6 +21,7 @@ import { CreateUnitPage } from './components/pages/CreateUnitPage';
 import { IngredientsPage } from './components/pages/IngredientsPage';
 import { CreateIngredientPage } from './components/pages/CreateIngredientPage';
 import { EditTagPage } from './components/pages/EditTagPage';
+import { EditUnitPage } from './components/pages/EditUnitPage';
 
 const theme = createTheme({
   fontFamily: 'Poppins, Open Sans, sans-serif',
@@ -89,6 +90,10 @@ root.render(
               {
                 path: '/administration/units',
                 element: <UnitsPage />,
+              },
+              {
+                path: '/administration/edit-unit/:id',
+                element: <EditUnitPage />,
               },
               {
                 path: '/administration/create-unit',
