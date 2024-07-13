@@ -1,6 +1,6 @@
 type Ingredient = {
-    ingredient: string;
-    id: number;
+  ingredient: string;
+  id: number;
 };
 
 export type { Ingredient };

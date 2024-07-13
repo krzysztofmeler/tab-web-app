@@ -1,6 +1,6 @@
 type Unit = {
-    unit: string;
-    id: number;
+  unit: string;
+  id: number;
 };
 
 export type { Unit };

@@ -7,89 +7,69 @@ import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook'
 import { Ingredient } from '../../types/Ingredient';
 
 const IngredientsPage: FC = () => {
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
-    const { data: authData } = useAuthContextRedirect();
+  const { data: authData } = useAuthContextRedirect();
 
-    if (authData === null) {
-        return <>You must login first</>;
+  if (authData === null) {
+    return <>You must login first</>;
+  }
+
+  useAsyncEffect(async () => {
+    const response = await fetch('ingredient/all', {
+      method: 'GET',
+      headers: { Authorization: authData.Authorization },
+    });
+
+    if (response.status === 200) {
+      setIngredients(response.data as Ingredient[]);
     }
+  }, []);
 
-    useAsyncEffect(async () => {
-        const response = await fetch('ingredient/all', {
-            method: 'GET',
-            headers: { Authorization: authData.Authorization },
-        });
+  const deleteIngredient = (id: number) => {
+    // todo: implement
+  };
 
-        if (response.status === 200) {
-            setIngredients(response.data as Ingredient[]);
-        }
-    }, []);
+  return (
+    <Flex maw={800} gap={20} mx="auto" my={50} direction="column" justify="stretch">
+      <Flex justify="space-between">
+        <Text component="h2" size="xl">
+          Ingredients
+        </Text>
 
-    const deleteIngredient = (id: number) => {
-        // todo: implement
-    };
+        <Button component={Link} to="/administration/create-ingredient">
+          Create ingredient
+        </Button>
+      </Flex>
 
-    return (
-        <Flex
-          maw={800}
-          gap={20}
-          mx="auto"
-          my={50}
-          direction="column"
-          justify="stretch"
-        >
-            <Flex justify="space-between">
-                <Text component="h2" size="xl">
-                    Ingredients
-                </Text>
+      <Flex direction="column" gap={15}>
+        {ingredients.length === 0 && (
+          <Card style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}>
+            <Flex h={100} justify="center" align="center">
+              <Text>No ingredients yet</Text>
+            </Flex>
+          </Card>
+        )}
 
-                <Button component={Link} to="/administration/create-ingredient">
-                    Create ingredient
+        {ingredients.map((ingredient) => (
+          <Card key={ingredient.id} style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}>
+            <Flex justify="space-between" align="center">
+              <Text>{ingredient.ingredient}</Text>
+
+              <Group gap={15}>
+                <Button variant="light" onClick={() => deleteIngredient(ingredient.id)}>
+                  Delete
                 </Button>
+                <Button component={Link} to={`/administration/edit-ingredient/${ingredient.id}`}>
+                  Edit
+                </Button>
+              </Group>
             </Flex>
-
-            <Flex direction="column" gap={15}>
-                {ingredients.length === 0 && (
-                    <Card
-                      style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
-                    >
-                        <Flex h={100} justify="center" align="center">
-                            <Text>No ingredients yet</Text>
-                        </Flex>
-                    </Card>
-                )}
-
-                {ingredients.map((ingredient) => (
-                    <Card
-                      key={ingredient.id}
-                      style={{ boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.15)' }}
-                    >
-                        <Flex justify="space-between" align="center">
-                            <Text>{ingredient.ingredient}</Text>
-
-                            <Group gap={15}>
-                                <Button
-                                  variant="light"
-                                  onClick={() =>
-                                        deleteIngredient(ingredient.id)
-                                    }
-                                >
-                                    Delete
-                                </Button>
-                                <Button
-                                  component={Link}
-                                  to={`/administration/edit-ingredient/${ingredient.id}`}
-                                >
-                                    Edit
-                                </Button>
-                            </Group>
-                        </Flex>
-                    </Card>
-                ))}
-            </Flex>
-        </Flex>
-    );
+          </Card>
+        ))}
+      </Flex>
+    </Flex>
+  );
 };
 
 export { IngredientsPage };

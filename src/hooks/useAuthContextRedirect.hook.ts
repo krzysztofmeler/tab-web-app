@@ -4,17 +4,17 @@ import { AuthContextType } from '../AuthContextType';
 import { useAuthContext } from './useAuthContext.hook';
 
 const useAuthContextRedirect = (): AuthContextType => {
-    const { data, update } = useAuthContext();
+  const { data, update } = useAuthContext();
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (data === null) {
-            navigate('/sign-in');
-        }
-    }, []);
+  useEffect(() => {
+    if (data === null) {
+      navigate('/sign-in');
+    }
+  }, []);
 
-    return { data, update };
+  return { data, update };
 };
 
 export { useAuthContextRedirect };
