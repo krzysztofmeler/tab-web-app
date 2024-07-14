@@ -20,6 +20,7 @@ import { fetch } from '../../hooks/useRequest.hook';
 import { Comment, Rating, Recipe } from '../../types/Recipe';
 import { jsSubmit } from '../../utils/js-submit';
 import { AddRatingToRecipeRequestData } from '../../types/backend-api/AddRatingToRecipeRequestData';
+import { showNotification } from '@mantine/notifications';
 
 type RatingDisplay = {
   rating: number;
@@ -92,7 +93,10 @@ const RecipePage: FC = () => {
 
   const [comment, setComment] = useState('');
 
+  const [commentFormDisabled, setCommentFormDisabled] = useState(false);
+
   const addComment = async () => {
+    setCommentFormDisabled(true);
     const response = await fetch.post(
       'comment/new',
       {
@@ -102,12 +106,16 @@ const RecipePage: FC = () => {
       { headers: { Authorization: authData.Authorization } },
     );
 
+
     if (response.status === 200) {
       const commentsResponse = await fetch.get(`comment/search/?recipeId=${id}`, {
         headers: { Authorization: authData.Authorization },
       });
 
+      setCommentFormDisabled(false);
+
       if (commentsResponse.status === 200) {
+        setComment('');
         setComments(
           (commentsResponse.data as unknown as Comment[]).map((comment) => ({
             id: comment.id,
@@ -116,7 +124,20 @@ const RecipePage: FC = () => {
             creator: comment.user.email,
           })),
         );
+      } else {
+        showNotification({
+          title: 'Error',
+          message: 'Comment was created but an error occurred during comment list update',
+          color: 'red',
+        })
       }
+    } else {
+      setCommentFormDisabled(false);
+      showNotification({
+        title: 'Error',
+        message: 'Comment was not created',
+        color: 'red',
+      })
     }
   };
 
@@ -212,8 +233,8 @@ const RecipePage: FC = () => {
         ))}
 
         <Flex w="100%" gap={10}>
-          <TextInput w="calc(100% - 150px)" value={comment} onChange={(e) => setComment(e.target.value)} />
-          <Button w="140px" onClick={addComment}>
+          <TextInput disabled={commentFormDisabled} w="calc(100% - 150px)" value={comment} onChange={(e) => setComment(e.target.value)} />
+          <Button w="140px" onClick={addComment} disabled={commentFormDisabled} loading={commentFormDisabled}>
             Add comment
           </Button>
         </Flex>
