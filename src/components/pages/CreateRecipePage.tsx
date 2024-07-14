@@ -25,6 +25,7 @@ import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { Unit } from '../../types/Unit';
 import { Ingredient } from '../../types/Ingredient';
 import { AddIngredientToRecipeRequestData } from '../../types/backend-api/AddIngredientToRecipeRequestData';
+import { useNavigate } from 'react-router';
 
 type FormTypeIngredient = {
   ingredientId: number | null;
@@ -141,6 +142,8 @@ const CreateRecipePage: FC = () => {
   const [disableForm, setDisableForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleSubmitOK = async ({ tagIds, category, ingredients, ...data }: FormType) => {
     setDisableForm(true);
     setLoading(true);
@@ -162,6 +165,7 @@ const CreateRecipePage: FC = () => {
 
       if (response.status === 200) {
         const createdRecipeId = response.data.id;
+        const createdRecipeName = response.data.name;
 
         await Promise.all(
           tagIds.map((tagId) =>
@@ -200,6 +204,11 @@ const CreateRecipePage: FC = () => {
           autoClose: 3000,
           color: 'green',
         });
+
+        setTimeout(() => {
+          navigate(`/recipe/${createdRecipeId}/${encodeURIComponent(createdRecipeName)}`)
+        }, 700)
+
       } else {
         setDisableForm(false);
 
