@@ -185,7 +185,7 @@ const RecipePage: FC = () => {
         <Flex align="center" gap={10}>
           {Number.isNaN(avgScore) && <RatingIndicator readOnly={!ratingEnabled} onChange={addRating} c="#eee" />}
           {!Number.isNaN(avgScore) && (
-            <RatingIndicator readOnly={!ratingEnabled} onChange={addRating} value={avgScore} fractions={10} />
+            <RatingIndicator readOnly={!ratingEnabled} onChange={addRating} value={avgScore} fractions={ratingEnabled ? 1 : 10} />
           )}
 
           <Text size="xs" c="#999">

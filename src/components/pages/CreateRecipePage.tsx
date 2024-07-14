@@ -63,6 +63,7 @@ const CreateRecipePage: FC = () => {
     category: z.string({ message: 'Category selection is required.' }),
     steps: z
       .array(z.string().min(5, 'Minimal length is 5 characters.').max(120, 'Maximal length is 120 characters'))
+      .min(1, 'At least one step is required.')
       .max(30, 'You can specify at most 30 steps.'),
     tagIds: z.array(z.number()).min(1, 'Pick at least one tag.').max(6, 'Number of tags should not exceed 6.'),
     ingredients: z
@@ -211,6 +212,7 @@ const CreateRecipePage: FC = () => {
 
       } else {
         setDisableForm(false);
+        setLoading(false);
 
         notifications.show({
           title: 'Failed',
@@ -235,7 +237,10 @@ const CreateRecipePage: FC = () => {
 
   watch(({ steps: formSteps }) => {
     if (formSteps) {
-      trigger('steps');
+      if (formSteps.length > 0) {
+        trigger('steps');
+      }
+
       setSteps(formSteps as string[]);
     }
   });
