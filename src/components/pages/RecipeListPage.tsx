@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, Flex, MultiSelect, Pagination, Select, Space, Text, TextInput } from '@mantine/core';
+import { Button, Card, Center, Flex, MultiSelect, Pagination, Select, Space, Text, TextInput } from '@mantine/core';
 import { useAsyncEffect } from '../../hooks/useAsyncEffect.hook';
 import { fetch } from '../../hooks/useRequest.hook';
 import { useAuthContextRedirect } from '../../hooks/useAuthContextRedirect.hook';
@@ -12,14 +12,17 @@ const RecipeListPage: FC = () => {
   if (authData === null) return <>You must login first</>;
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [error, setError] = useState(false);
 
   useAsyncEffect(async () => {
     const response = await fetch.get('recipe/all', {
       headers: { Authorization: authData.Authorization },
     });
 
-    if (response.status === 200) {
+    if (response.status === 200 && response.headers['content-type'] === 'application/json') {
       setRecipes(response.data);
+    } else {
+      setError(true);
     }
   }, []);
 
@@ -69,6 +72,12 @@ const RecipeListPage: FC = () => {
           value={selectedCategories}
         />
       </Flex>
+
+      { error && (
+        <Center w={'100%'} h={200} bg={'#eee'}>
+          <Text c={'#222'}>An error occurred during loading of list</Text>
+        </Center>
+      ) }
 
       {recipesPage.map((recipe) => (
         <Card style={{ boxShadow: '0 0 5px 0 #ddd' }}>
